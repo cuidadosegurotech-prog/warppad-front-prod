@@ -123,7 +123,7 @@ export default function Dashboard() {
                   <p className="text-slate-600 text-sm">Consultar estado de solicitudes</p>
                 </div>
               </div>
-            </div>
+            </button>
           </div>
         </Card>
       </div>
