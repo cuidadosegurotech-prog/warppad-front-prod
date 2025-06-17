@@ -24,9 +24,9 @@ const LoginForm = () => {
   };
 
   return (
-    <Card className="backdrop-blur-xl bg-white/10 border border-white/20 shadow-2xl p-6 relative overflow-hidden">
+    <Card className="backdrop-blur-xl bg-blue-800/20 border border-blue-400/30 shadow-2xl p-6 relative overflow-hidden">
       {/* Glass effect overlay */}
-      <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent pointer-events-none"></div>
+      <div className="absolute inset-0 bg-gradient-to-br from-blue-400/10 to-transparent pointer-events-none"></div>
       
       <form onSubmit={handleSubmit} className="space-y-6 relative z-10">
         <div className="space-y-4">
@@ -36,7 +36,7 @@ const LoginForm = () => {
               Email
             </Label>
             <div className="relative group">
-              <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5 group-focus-within:text-cyan-400 transition-colors" />
+              <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-blue-300 w-5 h-5 group-focus-within:text-yellow-400 transition-colors" />
               <Input
                 id="email"
                 type="email"
@@ -44,7 +44,7 @@ const LoginForm = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="pl-11 bg-white/5 border-white/20 text-white placeholder:text-slate-400 focus:border-cyan-400 focus:ring-cyan-400/20 h-12 transition-all duration-200 hover:bg-white/10"
+                className="pl-11 bg-blue-900/20 border-blue-400/30 text-white placeholder:text-blue-200 focus:border-yellow-400 focus:ring-yellow-400/20 h-12 transition-all duration-200 hover:bg-blue-800/30"
               />
             </div>
           </div>
@@ -55,7 +55,7 @@ const LoginForm = () => {
               Contraseña
             </Label>
             <div className="relative group">
-              <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5 group-focus-within:text-cyan-400 transition-colors" />
+              <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-blue-300 w-5 h-5 group-focus-within:text-yellow-400 transition-colors" />
               <Input
                 id="password"
                 type={showPassword ? "text" : "password"}
@@ -63,12 +63,12 @@ const LoginForm = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="pl-11 pr-11 bg-white/5 border-white/20 text-white placeholder:text-slate-400 focus:border-cyan-400 focus:ring-cyan-400/20 h-12 transition-all duration-200 hover:bg-white/10"
+                className="pl-11 pr-11 bg-blue-900/20 border-blue-400/30 text-white placeholder:text-blue-200 focus:border-yellow-400 focus:ring-yellow-400/20 h-12 transition-all duration-200 hover:bg-blue-800/30"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-white transition-colors"
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-blue-300 hover:text-yellow-400 transition-colors"
               >
                 {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
               </button>
@@ -80,7 +80,7 @@ const LoginForm = () => {
         <div className="text-right">
           <button
             type="button"
-            className="text-sm text-slate-400 hover:text-cyan-400 transition-colors"
+            className="text-sm text-blue-300 hover:text-yellow-400 transition-colors"
           >
             ¿Olvidaste tu contraseña?
           </button>
@@ -90,11 +90,11 @@ const LoginForm = () => {
         <Button
           type="submit"
           disabled={isLoading}
-          className="w-full bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-600 hover:from-cyan-400 hover:via-blue-400 hover:to-purple-500 text-white font-semibold h-12 rounded-lg shadow-xl hover:shadow-2xl transform hover:scale-[1.02] transition-all duration-200 group disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full bg-gradient-to-r from-yellow-500 via-amber-500 to-yellow-600 hover:from-yellow-400 hover:via-amber-400 hover:to-yellow-500 text-blue-900 font-semibold h-12 rounded-lg shadow-xl hover:shadow-2xl transform hover:scale-[1.02] transition-all duration-200 group disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isLoading ? (
             <div className="flex items-center space-x-2">
-              <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+              <div className="w-5 h-5 border-2 border-blue-900/30 border-t-blue-900 rounded-full animate-spin"></div>
               <span>Iniciando sesión...</span>
             </div>
           ) : (
@@ -108,10 +108,10 @@ const LoginForm = () => {
         {/* Divider */}
         <div className="relative">
           <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-white/20"></div>
+            <div className="w-full border-t border-blue-400/30"></div>
           </div>
           <div className="relative flex justify-center text-sm">
-            <span className="px-4 bg-transparent text-slate-400">o continúa con</span>
+            <span className="px-4 bg-transparent text-blue-300">o continúa con</span>
           </div>
         </div>
 
@@ -120,7 +120,7 @@ const LoginForm = () => {
           <Button
             type="button"
             variant="outline"
-            className="bg-white/5 border-white/20 text-white hover:bg-white/10 h-11 transition-all duration-200"
+            className="bg-blue-800/20 border-blue-400/30 text-white hover:bg-blue-700/30 hover:border-yellow-400/50 h-11 transition-all duration-200"
           >
             <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
               <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -133,7 +133,7 @@ const LoginForm = () => {
           <Button
             type="button"
             variant="outline"
-            className="bg-white/5 border-white/20 text-white hover:bg-white/10 h-11 transition-all duration-200"
+            className="bg-blue-800/20 border-blue-400/30 text-white hover:bg-blue-700/30 hover:border-yellow-400/50 h-11 transition-all duration-200"
           >
             <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
               <path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.417 7.618 11.024-.105-.949-.199-2.403.041-3.439.219-.937 1.406-5.957 1.406-5.957s-.359-.72-.359-1.781c0-1.663.967-2.911 2.168-2.911 1.024 0 1.518.769 1.518 1.688 0 1.029-.653 2.567-.992 3.992-.285 1.193.6 2.165 1.775 2.165 2.128 0 3.768-2.245 3.768-5.487 0-2.861-2.063-4.869-5.008-4.869-3.41 0-5.409 2.562-5.409 5.199 0 1.033.394 2.143.889 2.741.097.118.112.225.085.345-.09.375-.293 1.199-.334 1.363-.053.225-.172.271-.402.165-1.495-.69-2.433-2.878-2.433-4.646 0-3.776 2.748-7.252 7.92-7.252 4.158 0 7.392 2.967 7.392 6.923 0 4.135-2.607 7.462-6.233 7.462-1.214 0-2.357-.629-2.748-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24.009 12.017 24.009c6.624 0 11.99-5.367 11.99-11.988C24.007 5.367 18.641.001.012.001z"/>
