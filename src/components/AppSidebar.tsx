@@ -71,7 +71,7 @@ export function AppSidebar() {
                     isActive={location.pathname === item.url}
                     className="mx-2 rounded-lg hover:bg-blue-800/50 data-[active=true]:bg-gradient-to-r data-[active=true]:from-yellow-500/30 data-[active=true]:to-amber-500/30 data-[active=true]:border data-[active=true]:border-yellow-400/50"
                   >
-                    <Link to={item.url} className="flex items-center gap-3 text-blue-100 hover:text-yellow-200 data-[active=true]:text-yellow-300">
+                    <Link to={item.url} className="flex items-center gap-3 text-blue-100 hover:text-yellow-200 data-[active=true]:text-blue-900 data-[active=true]:font-semibold">
                       <item.icon className="w-5 h-5" />
                       <span className="font-medium">{item.title}</span>
                     </Link>
