@@ -1,5 +1,6 @@
 
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -7,6 +8,7 @@ import { Card } from "@/components/ui/card";
 import { Eye, EyeOff, Mail, Lock, ArrowRight } from "lucide-react";
 
 const LoginForm = () => {
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -20,6 +22,8 @@ const LoginForm = () => {
     setTimeout(() => {
       setIsLoading(false);
       console.log("Login attempt:", { email, password });
+      // Redirect to dashboard after successful login
+      navigate("/dashboard");
     }, 2000);
   };
 
