@@ -1,11 +1,45 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+
+import LoginForm from "@/components/LoginForm";
 
 const Index = () => {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden">
+      {/* Animated background grid */}
+      <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%239C92AC" fill-opacity="0.1"%3E%3Cpath d="M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-20 animate-pulse"></div>
+      
+      {/* Glowing orbs */}
+      <div className="absolute top-20 left-10 w-32 h-32 bg-cyan-400/20 rounded-full blur-3xl animate-pulse"></div>
+      <div className="absolute bottom-20 right-10 w-40 h-40 bg-purple-400/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
+      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-60 h-60 bg-blue-400/10 rounded-full blur-3xl animate-pulse delay-500"></div>
+
+      <div className="relative z-10 flex items-center justify-center min-h-screen p-4">
+        <div className="w-full max-w-md">
+          {/* Logo and Title */}
+          <div className="text-center mb-8">
+            <div className="inline-block p-4 bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 rounded-2xl mb-4 shadow-2xl">
+              <div className="w-12 h-12 bg-white rounded-lg flex items-center justify-center">
+                <svg className="w-8 h-8 text-slate-900" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 2L2 7v10c0 5.55 3.84 9.74 9 11 5.16-1.26 9-5.45 9-11V7l-10-5z"/>
+                  <path d="M8 12l2 2 4-4" stroke="white" strokeWidth="2" fill="none"/>
+                </svg>
+              </div>
+            </div>
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-white via-cyan-100 to-purple-200 bg-clip-text text-transparent mb-2">
+              Warp
+            </h1>
+            <p className="text-slate-400 text-sm">
+              Tu hub de automatizaciones inteligentes
+            </p>
+          </div>
+
+          {/* Login Form */}
+          <LoginForm />
+
+          {/* Footer */}
+          <div className="text-center mt-8 text-slate-500 text-sm">
+            <p>¿No tienes cuenta? <span className="text-cyan-400 cursor-pointer hover:text-cyan-300 transition-colors">Crear cuenta</span></p>
+          </div>
+        </div>
       </div>
     </div>
   );
