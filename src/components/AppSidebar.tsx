@@ -1,5 +1,5 @@
 
-import { Calendar, FileText, LayoutDashboard, Plus } from "lucide-react";
+import { Calendar, FileText, LayoutDashboard, Plus, Settings } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import {
   Sidebar,
@@ -28,6 +28,11 @@ const menuItems = [
     title: "Consultar solicitudes",
     url: "/consultar-solicitudes",
     icon: FileText,
+  },
+  {
+    title: "Configuración",
+    url: "/configuracion",
+    icon: Settings,
   },
 ];
 
