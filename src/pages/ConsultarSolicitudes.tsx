@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { 
   Pagination, 
   PaginationContent, 
@@ -20,7 +21,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Search, Clock, CheckCircle, AlertCircle, XCircle, Eye, LayoutGrid, Grid2x2 } from "lucide-react";
+import { Search, Clock, CheckCircle, AlertCircle, XCircle, Eye, LayoutGrid, Grid2x2, AlertTriangle } from "lucide-react";
+import { formatDistanceToNow, differenceInDays, parseISO } from "date-fns";
+import { es } from "date-fns/locale";
 
 // Datos de ejemplo
 const solicitudesEjemplo = [
@@ -48,8 +51,8 @@ const solicitudesEjemplo = [
     tipo: "Reporte automático",
     estado: "Pendiente",
     prioridad: "Baja",
-    fechaCreacion: "2024-01-22",
-    fechaActualizacion: "2024-01-22",
+    fechaCreacion: "2023-12-01",
+    fechaActualizacion: "2023-12-01",
   },
   {
     id: "REQ-004",
@@ -66,7 +69,7 @@ const solicitudesEjemplo = [
     tipo: "Workflow",
     estado: "En progreso",
     prioridad: "Alta",
-    fechaCreacion: "2024-01-25",
+    fechaCreacion: "2023-11-15",
     fechaActualizacion: "2024-01-28",
   },
   {
@@ -86,6 +89,29 @@ export default function ConsultarSolicitudes() {
   const [viewMode, setViewMode] = useState<"grid" | "cards">("grid");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 4;
+
+  // Función para calcular el tiempo transcurrido
+  const getTimeElapsed = (fechaCreacion: string) => {
+    try {
+      const fecha = parseISO(fechaCreacion);
+      return formatDistanceToNow(fecha, { addSuffix: true, locale: es });
+    } catch (error) {
+      return "Fecha inválida";
+    }
+  };
+
+  // Función para determinar si una solicitud está vencida
+  const isOverdue = (fechaCreacion: string, estado: string) => {
+    if (estado === "Completado" || estado === "Cancelado") return false;
+    
+    try {
+      const fecha = parseISO(fechaCreacion);
+      const diasTranscurridos = differenceInDays(new Date(), fecha);
+      return diasTranscurridos > 30; // Consideramos vencida después de 30 días
+    } catch (error) {
+      return false;
+    }
+  };
 
   const getStatusIcon = (estado: string) => {
     switch (estado) {
@@ -138,6 +164,11 @@ export default function ConsultarSolicitudes() {
     solicitud.tipo.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  // Separar solicitudes vencidas para mostrar alertas
+  const solicitudesVencidas = filteredSolicitudes.filter(solicitud => 
+    isOverdue(solicitud.fechaCreacion, solicitud.estado)
+  );
+
   // Paginación
   const totalPages = Math.ceil(filteredSolicitudes.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -156,13 +187,26 @@ export default function ConsultarSolicitudes() {
         </Card>
       ) : (
         currentSolicitudes.map((solicitud) => (
-          <Card key={solicitud.id} className="bg-white/80 backdrop-blur-sm border border-slate-200/50 shadow-lg p-6 hover:bg-white/90 transition-all duration-200">
+          <Card 
+            key={solicitud.id} 
+            className={`bg-white/80 backdrop-blur-sm border border-slate-200/50 shadow-lg p-6 hover:bg-white/90 transition-all duration-200 ${
+              isOverdue(solicitud.fechaCreacion, solicitud.estado) 
+                ? 'animate-pulse border-red-400 bg-red-50/80' 
+                : ''
+            }`}
+          >
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div className="flex-1 space-y-3">
                 <div className="flex items-start gap-3">
                   <div className="flex items-center gap-2">
                     {getStatusIcon(solicitud.estado)}
                     <span className="text-sm font-mono text-slate-600">{solicitud.id}</span>
+                    {isOverdue(solicitud.fechaCreacion, solicitud.estado) && (
+                      <div className="flex items-center gap-1 text-red-600">
+                        <AlertTriangle className="w-4 h-4 animate-pulse" />
+                        <span className="text-xs font-semibold">VENCIDA</span>
+                      </div>
+                    )}
                   </div>
                 </div>
                 
@@ -184,6 +228,10 @@ export default function ConsultarSolicitudes() {
                   <span>Creado: {new Date(solicitud.fechaCreacion).toLocaleDateString()}</span>
                   <span className="hidden sm:inline">•</span>
                   <span>Actualizado: {new Date(solicitud.fechaActualizacion).toLocaleDateString()}</span>
+                  <span className="hidden sm:inline">•</span>
+                  <span className="font-medium text-blue-600">
+                    Tiempo transcurrido: {getTimeElapsed(solicitud.fechaCreacion)}
+                  </span>
                 </div>
               </div>
               
@@ -215,20 +263,35 @@ export default function ConsultarSolicitudes() {
             <TableHead className="text-slate-700 font-semibold">Prioridad</TableHead>
             <TableHead className="text-slate-700 font-semibold">Tipo</TableHead>
             <TableHead className="text-slate-700 font-semibold">Fecha</TableHead>
+            <TableHead className="text-slate-700 font-semibold">Tiempo Transcurrido</TableHead>
             <TableHead className="text-slate-700 font-semibold">Acciones</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {currentSolicitudes.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={7} className="text-center py-8 text-slate-600">
+              <TableCell colSpan={8} className="text-center py-8 text-slate-600">
                 No se encontraron solicitudes que coincidan con tu búsqueda.
               </TableCell>
             </TableRow>
           ) : (
             currentSolicitudes.map((solicitud) => (
-              <TableRow key={solicitud.id} className="hover:bg-slate-50/50 border-slate-200">
-                <TableCell className="font-mono text-slate-600">{solicitud.id}</TableCell>
+              <TableRow 
+                key={solicitud.id} 
+                className={`hover:bg-slate-50/50 border-slate-200 ${
+                  isOverdue(solicitud.fechaCreacion, solicitud.estado) 
+                    ? 'animate-pulse bg-red-50/50' 
+                    : ''
+                }`}
+              >
+                <TableCell className="font-mono text-slate-600">
+                  <div className="flex items-center gap-2">
+                    {solicitud.id}
+                    {isOverdue(solicitud.fechaCreacion, solicitud.estado) && (
+                      <AlertTriangle className="w-4 h-4 text-red-600 animate-pulse" />
+                    )}
+                  </div>
+                </TableCell>
                 <TableCell className="font-semibold text-slate-800 max-w-xs truncate">
                   {solicitud.titulo}
                 </TableCell>
@@ -252,6 +315,11 @@ export default function ConsultarSolicitudes() {
                 </TableCell>
                 <TableCell className="text-slate-600 text-sm">
                   {new Date(solicitud.fechaCreacion).toLocaleDateString()}
+                </TableCell>
+                <TableCell className="text-slate-600 text-sm font-medium">
+                  <span className="text-blue-600">
+                    {getTimeElapsed(solicitud.fechaCreacion)}
+                  </span>
                 </TableCell>
                 <TableCell>
                   <Button
@@ -282,6 +350,21 @@ export default function ConsultarSolicitudes() {
           Revisa el estado de todas tus solicitudes de automatización
         </p>
       </div>
+
+      {/* Alerta para solicitudes vencidas */}
+      {solicitudesVencidas.length > 0 && (
+        <Alert className="border-red-400 bg-red-50/80 animate-pulse">
+          <AlertTriangle className="h-4 w-4 text-red-600" />
+          <AlertDescription className="text-red-800">
+            <strong>¡Atención!</strong> Tienes {solicitudesVencidas.length} solicitud{solicitudesVencidas.length > 1 ? 'es' : ''} vencida{solicitudesVencidas.length > 1 ? 's' : ''} que requiere{solicitudesVencidas.length > 1 ? 'n' : ''} atención inmediata.
+            {solicitudesVencidas.length <= 3 && (
+              <span className="block mt-1">
+                {solicitudesVencidas.map(s => s.id).join(', ')}
+              </span>
+            )}
+          </AlertDescription>
+        </Alert>
+      )}
 
       {/* Search Bar y controles de vista */}
       <div className="flex flex-col md:flex-row gap-4">
@@ -367,14 +450,17 @@ export default function ConsultarSolicitudes() {
       )}
 
       {/* Stats Summary */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
         {[
           { label: "Total", value: solicitudes.length, color: "text-blue-600" },
           { label: "Completadas", value: solicitudes.filter(s => s.estado === "Completado").length, color: "text-green-600" },
           { label: "En progreso", value: solicitudes.filter(s => s.estado === "En progreso").length, color: "text-yellow-600" },
           { label: "Pendientes", value: solicitudes.filter(s => s.estado === "Pendiente").length, color: "text-orange-600" },
+          { label: "Vencidas", value: solicitudesVencidas.length, color: "text-red-600" },
         ].map((stat) => (
-          <Card key={stat.label} className="bg-white/80 backdrop-blur-sm border border-slate-200/50 shadow-lg p-4 text-center">
+          <Card key={stat.label} className={`bg-white/80 backdrop-blur-sm border border-slate-200/50 shadow-lg p-4 text-center ${
+            stat.label === "Vencidas" && stat.value > 0 ? 'animate-pulse border-red-400' : ''
+          }`}>
             <p className={`text-2xl font-bold ${stat.color}`}>{stat.value}</p>
             <p className="text-sm text-slate-600">{stat.label}</p>
           </Card>
