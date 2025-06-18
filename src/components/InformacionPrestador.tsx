@@ -36,12 +36,22 @@ export default function InformacionPrestador({
   onRegionalChange,
   onPrestadorChange
 }: InformacionPrestadorProps) {
+  console.log("InformacionPrestador - regional:", regional);
+  console.log("InformacionPrestador - prestador:", prestador);
+  
   const prestadoresDisponibles = prestadoresPorRegional[regional] || [];
+  console.log("Prestadores disponibles:", prestadoresDisponibles);
 
   const handleRegionalChange = (value: string) => {
+    console.log("Cambio de regional a:", value);
     onRegionalChange(value);
     // Limpiar el prestador seleccionado cuando cambia la regional
     onPrestadorChange("");
+  };
+
+  const handlePrestadorChange = (value: string) => {
+    console.log("Cambio de prestador a:", value);
+    onPrestadorChange(value);
   };
 
   return (
@@ -59,8 +69,10 @@ export default function InformacionPrestador({
           <SelectTrigger className="bg-white border-slate-200 text-slate-800 focus:border-blue-400 focus:ring-blue-400/20">
             <SelectValue placeholder="Selecciona la regional" />
           </SelectTrigger>
-          <SelectContent className="bg-white border-slate-200 z-50">
-            <SelectItem value="magdalena" className="text-slate-800 hover:bg-slate-50">Magdalena</SelectItem>
+          <SelectContent className="bg-white border-slate-200 shadow-lg z-[100]">
+            <SelectItem value="magdalena" className="text-slate-800 hover:bg-slate-50 bg-white">
+              Magdalena
+            </SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -70,16 +82,16 @@ export default function InformacionPrestador({
         <Label htmlFor="prestador" className="text-slate-800 font-medium">
           Prestador
         </Label>
-        <Select value={prestador} onValueChange={onPrestadorChange} disabled={!regional}>
+        <Select value={prestador} onValueChange={handlePrestadorChange} disabled={!regional}>
           <SelectTrigger className="bg-white border-slate-200 text-slate-800 focus:border-blue-400 focus:ring-blue-400/20 disabled:opacity-50">
             <SelectValue placeholder={regional ? "Selecciona el prestador" : "Primero selecciona una regional"} />
           </SelectTrigger>
-          <SelectContent className="bg-white border-slate-200 z-50">
+          <SelectContent className="bg-white border-slate-200 shadow-lg z-[100] max-h-[200px] overflow-y-auto">
             {prestadoresDisponibles.map((prestador) => (
               <SelectItem 
                 key={prestador.nit} 
                 value={`${prestador.nombre} - ${prestador.nit}`}
-                className="text-slate-800 hover:bg-slate-50"
+                className="text-slate-800 hover:bg-slate-50 bg-white cursor-pointer"
               >
                 {prestador.nombre} - {prestador.nit}
               </SelectItem>
