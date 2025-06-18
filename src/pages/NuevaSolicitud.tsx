@@ -7,6 +7,7 @@ import { Card } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Send, FileText } from "lucide-react";
+import DatosPaciente from "@/components/DatosPaciente";
 
 export default function NuevaSolicitud() {
   const [formData, setFormData] = useState({
@@ -14,6 +15,10 @@ export default function NuevaSolicitud() {
     tipo: "",
     descripcion: "",
     prioridad: "",
+    // Datos del paciente
+    tipoDocumento: "",
+    numeroIdentificacion: "",
+    nombrePaciente: "",
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -36,72 +41,89 @@ export default function NuevaSolicitud() {
 
       {/* Form */}
       <Card className="bg-white/80 backdrop-blur-sm border border-slate-200/50 shadow-lg p-6">
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Título */}
-          <div className="space-y-2">
-            <Label htmlFor="titulo" className="text-slate-800 font-medium">
-              Título de la solicitud
-            </Label>
-            <Input
-              id="titulo"
-              placeholder="Ej: Automatizar proceso de facturación"
-              value={formData.titulo}
-              onChange={(e) => setFormData({...formData, titulo: e.target.value})}
-              className="bg-white border-slate-200 text-slate-800 placeholder:text-slate-400 focus:border-blue-400 focus:ring-blue-400/20"
-              required
-            />
-          </div>
+        <form onSubmit={handleSubmit} className="space-y-8">
+          {/* Datos del Paciente */}
+          <DatosPaciente
+            tipoDocumento={formData.tipoDocumento}
+            numeroIdentificacion={formData.numeroIdentificacion}
+            nombrePaciente={formData.nombrePaciente}
+            onTipoDocumentoChange={(value) => setFormData({...formData, tipoDocumento: value})}
+            onNumeroIdentificacionChange={(value) => setFormData({...formData, numeroIdentificacion: value})}
+            onNombrePacienteChange={(value) => setFormData({...formData, nombrePaciente: value})}
+          />
 
-          {/* Tipo de solicitud */}
-          <div className="space-y-2">
-            <Label htmlFor="tipo" className="text-slate-800 font-medium">
-              Tipo de automatización
-            </Label>
-            <Select value={formData.tipo} onValueChange={(value) => setFormData({...formData, tipo: value})}>
-              <SelectTrigger className="bg-white border-slate-200 text-slate-800 focus:border-blue-400 focus:ring-blue-400/20">
-                <SelectValue placeholder="Selecciona el tipo" />
-              </SelectTrigger>
-              <SelectContent className="bg-white border-slate-200">
-                <SelectItem value="workflow" className="text-slate-800 hover:bg-slate-50">Workflow</SelectItem>
-                <SelectItem value="integracion" className="text-slate-800 hover:bg-slate-50">Integración</SelectItem>
-                <SelectItem value="reporte" className="text-slate-800 hover:bg-slate-50">Reporte automático</SelectItem>
-                <SelectItem value="notificacion" className="text-slate-800 hover:bg-slate-50">Sistema de notificaciones</SelectItem>
-                <SelectItem value="otro" className="text-slate-800 hover:bg-slate-50">Otro</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+          {/* Información de la Solicitud */}
+          <div className="space-y-6 pt-6 border-t border-slate-200">
+            <div>
+              <h3 className="text-lg font-semibold text-slate-800 mb-4">Información de la Solicitud</h3>
+            </div>
 
-          {/* Prioridad */}
-          <div className="space-y-2">
-            <Label htmlFor="prioridad" className="text-slate-800 font-medium">
-              Prioridad
-            </Label>
-            <Select value={formData.prioridad} onValueChange={(value) => setFormData({...formData, prioridad: value})}>
-              <SelectTrigger className="bg-white border-slate-200 text-slate-800 focus:border-blue-400 focus:ring-blue-400/20">
-                <SelectValue placeholder="Selecciona la prioridad" />
-              </SelectTrigger>
-              <SelectContent className="bg-white border-slate-200">
-                <SelectItem value="baja" className="text-green-600 hover:bg-slate-50">Baja</SelectItem>
-                <SelectItem value="media" className="text-yellow-600 hover:bg-slate-50">Media</SelectItem>
-                <SelectItem value="alta" className="text-orange-600 hover:bg-slate-50">Alta</SelectItem>
-                <SelectItem value="urgente" className="text-red-600 hover:bg-slate-50">Urgente</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+            {/* Título */}
+            <div className="space-y-2">
+              <Label htmlFor="titulo" className="text-slate-800 font-medium">
+                Título de la solicitud
+              </Label>
+              <Input
+                id="titulo"
+                placeholder="Ej: Automatizar proceso de facturación"
+                value={formData.titulo}
+                onChange={(e) => setFormData({...formData, titulo: e.target.value})}
+                className="bg-white border-slate-200 text-slate-800 placeholder:text-slate-400 focus:border-blue-400 focus:ring-blue-400/20"
+                required
+              />
+            </div>
 
-          {/* Descripción */}
-          <div className="space-y-2">
-            <Label htmlFor="descripcion" className="text-slate-800 font-medium">
-              Descripción detallada
-            </Label>
-            <Textarea
-              id="descripcion"
-              placeholder="Describe detalladamente qué necesitas automatizar, qué sistemas están involucrados, etc."
-              value={formData.descripcion}
-              onChange={(e) => setFormData({...formData, descripcion: e.target.value})}
-              className="bg-white border-slate-200 text-slate-800 placeholder:text-slate-400 focus:border-blue-400 focus:ring-blue-400/20 min-h-32"
-              required
-            />
+            {/* Tipo de solicitud */}
+            <div className="space-y-2">
+              <Label htmlFor="tipo" className="text-slate-800 font-medium">
+                Tipo de automatización
+              </Label>
+              <Select value={formData.tipo} onValueChange={(value) => setFormData({...formData, tipo: value})}>
+                <SelectTrigger className="bg-white border-slate-200 text-slate-800 focus:border-blue-400 focus:ring-blue-400/20">
+                  <SelectValue placeholder="Selecciona el tipo" />
+                </SelectTrigger>
+                <SelectContent className="bg-white border-slate-200">
+                  <SelectItem value="workflow" className="text-slate-800 hover:bg-slate-50">Workflow</SelectItem>
+                  <SelectItem value="integracion" className="text-slate-800 hover:bg-slate-50">Integración</SelectItem>
+                  <SelectItem value="reporte" className="text-slate-800 hover:bg-slate-50">Reporte automático</SelectItem>
+                  <SelectItem value="notificacion" className="text-slate-800 hover:bg-slate-50">Sistema de notificaciones</SelectItem>
+                  <SelectItem value="otro" className="text-slate-800 hover:bg-slate-50">Otro</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Prioridad */}
+            <div className="space-y-2">
+              <Label htmlFor="prioridad" className="text-slate-800 font-medium">
+                Prioridad
+              </Label>
+              <Select value={formData.prioridad} onValueChange={(value) => setFormData({...formData, prioridad: value})}>
+                <SelectTrigger className="bg-white border-slate-200 text-slate-800 focus:border-blue-400 focus:ring-blue-400/20">
+                  <SelectValue placeholder="Selecciona la prioridad" />
+                </SelectTrigger>
+                <SelectContent className="bg-white border-slate-200">
+                  <SelectItem value="baja" className="text-green-600 hover:bg-slate-50">Baja</SelectItem>
+                  <SelectItem value="media" className="text-yellow-600 hover:bg-slate-50">Media</SelectItem>
+                  <SelectItem value="alta" className="text-orange-600 hover:bg-slate-50">Alta</SelectItem>
+                  <SelectItem value="urgente" className="text-red-600 hover:bg-slate-50">Urgente</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Descripción */}
+            <div className="space-y-2">
+              <Label htmlFor="descripcion" className="text-slate-800 font-medium">
+                Descripción detallada
+              </Label>
+              <Textarea
+                id="descripcion"
+                placeholder="Describe detalladamente qué necesitas automatizar, qué sistemas están involucrados, etc."
+                value={formData.descripcion}
+                onChange={(e) => setFormData({...formData, descripcion: e.target.value})}
+                className="bg-white border-slate-200 text-slate-800 placeholder:text-slate-400 focus:border-blue-400 focus:ring-blue-400/20 min-h-32"
+                required
+              />
+            </div>
           </div>
 
           {/* Botón de envío */}
