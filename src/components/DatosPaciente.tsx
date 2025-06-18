@@ -8,18 +8,22 @@ interface DatosPacienteProps {
   tipoDocumento: string;
   numeroIdentificacion: string;
   nombrePaciente: string;
+  departamento: string;
   onTipoDocumentoChange: (value: string) => void;
   onNumeroIdentificacionChange: (value: string) => void;
   onNombrePacienteChange: (value: string) => void;
+  onDepartamentoChange: (value: string) => void;
 }
 
 export default function DatosPaciente({
   tipoDocumento,
   numeroIdentificacion,
   nombrePaciente,
+  departamento,
   onTipoDocumentoChange,
   onNumeroIdentificacionChange,
-  onNombrePacienteChange
+  onNombrePacienteChange,
+  onDepartamentoChange
 }: DatosPacienteProps) {
   const handleNumeroChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     // Solo permitir números, sin puntos, espacios o caracteres especiales
@@ -107,6 +111,41 @@ export default function DatosPaciente({
           <p className="text-xs text-slate-500">
             Debe estar escrito tal cual como aparece en su documento de identidad
           </p>
+        </div>
+
+        {/* Departamento del paciente */}
+        <div className="space-y-2">
+          <Label htmlFor="departamento" className="text-slate-800 font-medium">
+            Departamento del paciente <span className="text-red-500">*</span>
+          </Label>
+          <Select value={departamento} onValueChange={onDepartamentoChange}>
+            <SelectTrigger className="bg-white border-slate-200 text-slate-800 focus:border-blue-400 focus:ring-blue-400/20">
+              <SelectValue placeholder="Selecciona el departamento" />
+            </SelectTrigger>
+            <SelectContent className="bg-white border-slate-200">
+              <SelectItem value="atlantico" className="text-slate-800 hover:bg-slate-50">
+                Atlántico
+              </SelectItem>
+              <SelectItem value="magdalena" className="text-slate-800 hover:bg-slate-50">
+                Magdalena
+              </SelectItem>
+              <SelectItem value="bolivar" className="text-slate-800 hover:bg-slate-50">
+                Bolívar
+              </SelectItem>
+              <SelectItem value="cesar" className="text-slate-800 hover:bg-slate-50">
+                Cesar
+              </SelectItem>
+              <SelectItem value="cordoba" className="text-slate-800 hover:bg-slate-50">
+                Córdoba
+              </SelectItem>
+              <SelectItem value="sucre" className="text-slate-800 hover:bg-slate-50">
+                Sucre
+              </SelectItem>
+              <SelectItem value="la_guajira" className="text-slate-800 hover:bg-slate-50">
+                La Guajira
+              </SelectItem>
+            </SelectContent>
+          </Select>
         </div>
       </div>
     </div>

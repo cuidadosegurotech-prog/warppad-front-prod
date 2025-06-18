@@ -19,6 +19,7 @@ export default function NuevaSolicitud() {
     tipoDocumento: "",
     numeroIdentificacion: "",
     nombrePaciente: "",
+    departamento: "",
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -47,9 +48,11 @@ export default function NuevaSolicitud() {
             tipoDocumento={formData.tipoDocumento}
             numeroIdentificacion={formData.numeroIdentificacion}
             nombrePaciente={formData.nombrePaciente}
+            departamento={formData.departamento}
             onTipoDocumentoChange={(value) => setFormData({...formData, tipoDocumento: value})}
             onNumeroIdentificacionChange={(value) => setFormData({...formData, numeroIdentificacion: value})}
             onNombrePacienteChange={(value) => setFormData({...formData, nombrePaciente: value})}
+            onDepartamentoChange={(value) => setFormData({...formData, departamento: value})}
           />
 
           {/* Información de la Solicitud */}
