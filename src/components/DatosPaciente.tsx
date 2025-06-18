@@ -2,6 +2,7 @@
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import { User } from "lucide-react";
 
 interface DatosPacienteProps {
@@ -9,10 +10,20 @@ interface DatosPacienteProps {
   numeroIdentificacion: string;
   nombrePaciente: string;
   departamento: string;
+  ciudadMunicipio: string;
+  direccion: string;
+  barrio: string;
+  puntoReferencia: string;
+  telefonos: string;
   onTipoDocumentoChange: (value: string) => void;
   onNumeroIdentificacionChange: (value: string) => void;
   onNombrePacienteChange: (value: string) => void;
   onDepartamentoChange: (value: string) => void;
+  onCiudadMunicipioChange: (value: string) => void;
+  onDireccionChange: (value: string) => void;
+  onBarrioChange: (value: string) => void;
+  onPuntoReferenciaChange: (value: string) => void;
+  onTelefonosChange: (value: string) => void;
 }
 
 export default function DatosPaciente({
@@ -20,15 +31,31 @@ export default function DatosPaciente({
   numeroIdentificacion,
   nombrePaciente,
   departamento,
+  ciudadMunicipio,
+  direccion,
+  barrio,
+  puntoReferencia,
+  telefonos,
   onTipoDocumentoChange,
   onNumeroIdentificacionChange,
   onNombrePacienteChange,
-  onDepartamentoChange
+  onDepartamentoChange,
+  onCiudadMunicipioChange,
+  onDireccionChange,
+  onBarrioChange,
+  onPuntoReferenciaChange,
+  onTelefonosChange
 }: DatosPacienteProps) {
   const handleNumeroChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     // Solo permitir números, sin puntos, espacios o caracteres especiales
     const value = e.target.value.replace(/[^0-9]/g, '');
     onNumeroIdentificacionChange(value);
+  };
+
+  const handleTelefonosChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // Permitir números, espacios, guiones y paréntesis para teléfonos
+    const value = e.target.value.replace(/[^0-9\s\-\(\)\+]/g, '');
+    onTelefonosChange(value);
   };
 
   return (
@@ -146,6 +173,90 @@ export default function DatosPaciente({
               </SelectItem>
             </SelectContent>
           </Select>
+        </div>
+
+        {/* Ciudad / Municipio del paciente */}
+        <div className="space-y-2">
+          <Label htmlFor="ciudadMunicipio" className="text-slate-800 font-medium">
+            Ciudad / Municipio del paciente <span className="text-red-500">*</span>
+          </Label>
+          <Input
+            id="ciudadMunicipio"
+            type="text"
+            placeholder="Nombre de la ciudad o municipio"
+            value={ciudadMunicipio}
+            onChange={(e) => onCiudadMunicipioChange(e.target.value)}
+            className="bg-white border-slate-200 text-slate-800 placeholder:text-slate-400 focus:border-blue-400 focus:ring-blue-400/20"
+            required
+          />
+        </div>
+
+        {/* Dirección del paciente */}
+        <div className="space-y-2">
+          <Label htmlFor="direccion" className="text-slate-800 font-medium">
+            Dirección del paciente <span className="text-red-500">*</span>
+          </Label>
+          <Input
+            id="direccion"
+            type="text"
+            placeholder="Dirección completa del domicilio"
+            value={direccion}
+            onChange={(e) => onDireccionChange(e.target.value)}
+            className="bg-white border-slate-200 text-slate-800 placeholder:text-slate-400 focus:border-blue-400 focus:ring-blue-400/20"
+            required
+          />
+        </div>
+
+        {/* Barrio del paciente */}
+        <div className="space-y-2">
+          <Label htmlFor="barrio" className="text-slate-800 font-medium">
+            Barrio del paciente <span className="text-red-500">*</span>
+          </Label>
+          <Input
+            id="barrio"
+            type="text"
+            placeholder="Nombre del barrio o sector"
+            value={barrio}
+            onChange={(e) => onBarrioChange(e.target.value)}
+            className="bg-white border-slate-200 text-slate-800 placeholder:text-slate-400 focus:border-blue-400 focus:ring-blue-400/20"
+            required
+          />
+        </div>
+
+        {/* Punto de referencia del domicilio */}
+        <div className="space-y-2">
+          <Label htmlFor="puntoReferencia" className="text-slate-800 font-medium">
+            Punto de referencia del domicilio
+          </Label>
+          <Textarea
+            id="puntoReferencia"
+            placeholder="Lugares cercanos que faciliten encontrar el domicilio (ej: cerca de la cancha, frente a la tienda Don José, al lado de la iglesia San Pedro, etc.)"
+            value={puntoReferencia}
+            onChange={(e) => onPuntoReferenciaChange(e.target.value)}
+            className="bg-white border-slate-200 text-slate-800 placeholder:text-slate-400 focus:border-blue-400 focus:ring-blue-400/20 min-h-20"
+          />
+          <p className="text-xs text-slate-500">
+            Menciona lugares conocidos como canchas, tiendas, iglesias, farmacias, parques, etc.
+          </p>
+        </div>
+
+        {/* Teléfonos */}
+        <div className="space-y-2">
+          <Label htmlFor="telefonos" className="text-slate-800 font-medium">
+            Teléfonos <span className="text-red-500">*</span>
+          </Label>
+          <Input
+            id="telefonos"
+            type="text"
+            placeholder="Ej: 300 123 4567, 605 234 5678"
+            value={telefonos}
+            onChange={handleTelefonosChange}
+            className="bg-white border-slate-200 text-slate-800 placeholder:text-slate-400 focus:border-blue-400 focus:ring-blue-400/20"
+            required
+          />
+          <p className="text-xs text-slate-500">
+            Puedes incluir varios números separados por comas
+          </p>
         </div>
       </div>
     </div>

@@ -20,6 +20,11 @@ export default function NuevaSolicitud() {
     numeroIdentificacion: "",
     nombrePaciente: "",
     departamento: "",
+    ciudadMunicipio: "",
+    direccion: "",
+    barrio: "",
+    puntoReferencia: "",
+    telefonos: "",
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -49,10 +54,20 @@ export default function NuevaSolicitud() {
             numeroIdentificacion={formData.numeroIdentificacion}
             nombrePaciente={formData.nombrePaciente}
             departamento={formData.departamento}
+            ciudadMunicipio={formData.ciudadMunicipio}
+            direccion={formData.direccion}
+            barrio={formData.barrio}
+            puntoReferencia={formData.puntoReferencia}
+            telefonos={formData.telefonos}
             onTipoDocumentoChange={(value) => setFormData({...formData, tipoDocumento: value})}
             onNumeroIdentificacionChange={(value) => setFormData({...formData, numeroIdentificacion: value})}
             onNombrePacienteChange={(value) => setFormData({...formData, nombrePaciente: value})}
             onDepartamentoChange={(value) => setFormData({...formData, departamento: value})}
+            onCiudadMunicipioChange={(value) => setFormData({...formData, ciudadMunicipio: value})}
+            onDireccionChange={(value) => setFormData({...formData, direccion: value})}
+            onBarrioChange={(value) => setFormData({...formData, barrio: value})}
+            onPuntoReferenciaChange={(value) => setFormData({...formData, puntoReferencia: value})}
+            onTelefonosChange={(value) => setFormData({...formData, telefonos: value})}
           />
 
           {/* Información de la Solicitud */}
