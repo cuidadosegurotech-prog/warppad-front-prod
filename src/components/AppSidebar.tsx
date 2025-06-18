@@ -1,3 +1,4 @@
+
 import { Calendar, FileText, LayoutDashboard, Plus, Settings } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import {
@@ -42,12 +43,14 @@ export function AppSidebar() {
     <Sidebar className="border-r border-blue-400/30 bg-gradient-to-br from-blue-900 via-blue-800 to-indigo-900">
       <SidebarHeader className="border-b border-blue-400/30 bg-gradient-to-r from-blue-800 to-indigo-800">
         <div className="flex items-center gap-3 p-4">
-          <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center overflow-hidden shadow-lg">
-            <img 
-              src="https://branzontech.com/wp-content/uploads/2025/06/ChatGPT-Image-18-jun-2025-10_17_52.webp" 
-              alt="Hub Logo" 
-              className="w-full h-full object-contain"
-            />
+          <div className="p-2 bg-gradient-to-r from-yellow-400 via-amber-400 to-yellow-500 rounded-xl shadow-lg">
+            <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center overflow-hidden">
+              <img 
+                src="https://branzontech.com/wp-content/uploads/2025/06/ChatGPT-Image-18-jun-2025-10_17_52.webp" 
+                alt="Hub Logo" 
+                className="w-full h-full object-contain"
+              />
+            </div>
           </div>
           <div>
             <h2 className="text-xl font-bold bg-gradient-to-r from-white via-yellow-200 to-cyan-200 bg-clip-text text-transparent">
