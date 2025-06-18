@@ -16,7 +16,7 @@ export function MainLayout({ children }: MainLayoutProps) {
           <header className="sticky top-0 z-40 bg-white/80 backdrop-blur-xl border-b border-slate-200/50 p-4 md:hidden">
             <div className="flex items-center gap-3">
               <SidebarTrigger className="text-slate-600 hover:text-blue-600 hover:bg-blue-50" />
-              <h1 className="text-lg font-semibold text-slate-800">Warp</h1>
+              <h1 className="text-lg font-semibold text-slate-800">Hub</h1>
             </div>
           </header>
 

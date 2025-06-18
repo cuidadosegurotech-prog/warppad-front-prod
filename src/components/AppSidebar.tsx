@@ -44,19 +44,20 @@ export function AppSidebar() {
       <SidebarHeader className="border-b border-blue-400/30 bg-gradient-to-r from-blue-800 to-indigo-800">
         <div className="flex items-center gap-3 p-4">
           <div className="p-2 bg-gradient-to-r from-yellow-400 via-amber-400 to-yellow-500 rounded-xl shadow-lg">
-            <div className="w-8 h-8 bg-blue-900 rounded-lg flex items-center justify-center">
-              <svg className="w-6 h-6 text-yellow-400" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 2L2 7v10c0 5.55 3.84 9.74 9 11 5.16-1.26 9-5.45 9-11V7l-10-5z"/>
-                <path d="M8 12l2 2 4-4" stroke="currentColor" strokeWidth="2" fill="none"/>
-              </svg>
+            <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center overflow-hidden">
+              <img 
+                src="https://branzontech.com/wp-content/uploads/2025/06/ChatGPT-Image-18-jun-2025-10_17_52.webp" 
+                alt="Hub Logo" 
+                className="w-full h-full object-contain"
+              />
             </div>
           </div>
           <div>
             <h2 className="text-xl font-bold bg-gradient-to-r from-white via-yellow-200 to-cyan-200 bg-clip-text text-transparent">
-              Warp
+              Hub
             </h2>
             <p className="text-sm text-blue-200">
-              Hub de automatizaciones
+              Plataforma de automatizaciones
             </p>
           </div>
         </div>
