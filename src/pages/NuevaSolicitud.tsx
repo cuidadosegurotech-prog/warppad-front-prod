@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Send, FileText } from "lucide-react";
 import DatosPaciente from "@/components/DatosPaciente";
+import InformacionPrestador from "@/components/InformacionPrestador";
 
 export default function NuevaSolicitud() {
   const [formData, setFormData] = useState({
@@ -25,6 +26,9 @@ export default function NuevaSolicitud() {
     barrio: "",
     puntoReferencia: "",
     telefonos: "",
+    // Información del prestador
+    regional: "",
+    prestador: "",
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -69,6 +73,16 @@ export default function NuevaSolicitud() {
             onPuntoReferenciaChange={(value) => setFormData({...formData, puntoReferencia: value})}
             onTelefonosChange={(value) => setFormData({...formData, telefonos: value})}
           />
+
+          {/* Información del Prestador */}
+          <div className="pt-6 border-t border-slate-200">
+            <InformacionPrestador
+              regional={formData.regional}
+              prestador={formData.prestador}
+              onRegionalChange={(value) => setFormData({...formData, regional: value})}
+              onPrestadorChange={(value) => setFormData({...formData, prestador: value})}
+            />
+          </div>
 
           {/* Información de la Solicitud */}
           <div className="space-y-6 pt-6 border-t border-slate-200">
