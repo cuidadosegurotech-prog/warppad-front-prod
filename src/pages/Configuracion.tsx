@@ -127,7 +127,7 @@ export default function Configuracion() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 relative">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
       {/* Sidebar flotante */}
       <ConfigSidebar
         categories={configCategories}
@@ -136,7 +136,7 @@ export default function Configuracion() {
         collapsed={sidebarCollapsed}
       />
 
-      {/* Toggle button for sidebar */}
+      {/* Toggle button para el sidebar */}
       <Button
         variant="outline"
         size="sm"
@@ -146,11 +146,15 @@ export default function Configuracion() {
         {sidebarCollapsed ? <Menu className="w-4 h-4" /> : <X className="w-4 h-4" />}
       </Button>
 
-      {/* Main Content */}
-      <div className="w-full">
-        {/* Header */}
-        <div className="bg-white/60 backdrop-blur-sm border-b border-gray-200/50 px-6 py-6">
-          <div className="max-w-6xl mx-auto">
+      {/* Layout principal con margen dinámico */}
+      <div 
+        className={`min-h-screen transition-all duration-300 ease-in-out ${
+          sidebarCollapsed ? 'ml-20' : 'ml-80'
+        }`}
+      >
+        {/* Header fijo */}
+        <div className="bg-white/60 backdrop-blur-sm border-b border-gray-200/50 px-6 py-6 sticky top-0 z-30">
+          <div className="max-w-5xl mx-auto">
             <h1 className="text-2xl font-bold text-gray-800">Panel de Configuración</h1>
             <p className="text-gray-600 mt-1">
               Administra todos los aspectos de tu sistema
@@ -158,9 +162,9 @@ export default function Configuracion() {
           </div>
         </div>
 
-        {/* Content Area with proper padding to avoid sidebar overlap */}
-        <div className="pl-80 pr-6 py-6">
-          <div className="max-w-6xl">
+        {/* Contenido principal centrado */}
+        <div className="px-6 py-6">
+          <div className="max-w-5xl mx-auto">
             <ConfigContent
               activeSection={activeSection}
               sections={configSections}
