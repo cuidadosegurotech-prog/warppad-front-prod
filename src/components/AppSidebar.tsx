@@ -1,5 +1,5 @@
 
-import { Calendar, FileText, LayoutDashboard, Plus, Settings, Palette } from "lucide-react";
+import { Calendar, FileText, LayoutDashboard, Plus, Settings, Palette, Mail } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import {
   Sidebar,
@@ -41,6 +41,11 @@ const uiComponents = [
     title: "Componentes UI",
     url: "/componentes-ui",
     icon: Palette,
+  },
+  {
+    title: "Plantillas de Correo",
+    url: "/plantillas-correo",
+    icon: Mail,
   },
 ];
 

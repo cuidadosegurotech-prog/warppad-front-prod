@@ -11,6 +11,7 @@ import NuevaSolicitud from "./pages/NuevaSolicitud";
 import ConsultarSolicitudes from "./pages/ConsultarSolicitudes";
 import Configuracion from "./pages/Configuracion";
 import ComponentesUI from "./pages/ComponentesUI";
+import PlantillasCorreo from "./pages/PlantillasCorreo";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -28,6 +29,7 @@ const App = () => (
           <Route path="/consultar-solicitudes" element={<MainLayout><ConsultarSolicitudes /></MainLayout>} />
           <Route path="/configuracion" element={<MainLayout><Configuracion /></MainLayout>} />
           <Route path="/componentes-ui" element={<MainLayout><ComponentesUI /></MainLayout>} />
+          <Route path="/plantillas-correo" element={<MainLayout><PlantillasCorreo /></MainLayout>} />
           <Route path="/404" element={<NotFound />} />
           <Route path="*" element={<Navigate to="/404" replace />} />
         </Routes>
