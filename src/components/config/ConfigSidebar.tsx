@@ -47,7 +47,7 @@ export function ConfigSidebar({
   if (collapsed) {
     return (
       <div className="fixed top-4 left-4 z-50 w-16 bg-white/95 backdrop-blur-md border border-gray-200 rounded-xl shadow-lg flex flex-col items-center py-4 space-y-2 max-h-[calc(100vh-2rem)]">
-        <ScrollArea className="flex-1 w-full">
+        <ScrollArea className="flex-1 w-full h-full">
           <div className="flex flex-col items-center space-y-2 px-2">
             {categories.flatMap(category => 
               category.sections.map(section => (
@@ -74,15 +74,15 @@ export function ConfigSidebar({
 
   return (
     <div className="fixed top-4 left-4 z-50 w-72 bg-white/95 backdrop-blur-md border border-gray-200 rounded-xl shadow-lg flex flex-col max-h-[calc(100vh-2rem)]">
-      <div className="p-4 border-b border-gray-200/60 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-t-xl">
+      <div className="p-4 border-b border-gray-200/60 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-t-xl flex-shrink-0">
         <h2 className="text-lg font-semibold text-gray-800">Configuración</h2>
         <p className="text-sm text-gray-600 mt-1">
           Administra tu sistema
         </p>
       </div>
       
-      <ScrollArea className="flex-1 min-h-0">
-        <div className="p-3">
+      <ScrollArea className="flex-1 overflow-hidden">
+        <div className="p-3 min-h-full">
           {categories.map((category, categoryIndex) => (
             <div key={category.id} className="mb-3">
               <Button
