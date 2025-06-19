@@ -26,7 +26,7 @@ export default function PlantillasCorreo() {
   const plantillaActual = plantillasCorreo.find(p => p.id === plantillaSeleccionada) || plantillasCorreo[0];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 max-w-full">
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
@@ -39,18 +39,22 @@ export default function PlantillasCorreo() {
         </CardHeader>
       </Card>
 
-      <div className="flex flex-col lg:flex-row gap-6">
-        <PlantillasList
-          plantillas={plantillasCorreo}
-          plantillaSeleccionada={plantillaSeleccionada}
-          onSeleccionar={setPlantillaSeleccionada}
-        />
+      <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
+        <div className="xl:col-span-4">
+          <PlantillasList
+            plantillas={plantillasCorreo}
+            plantillaSeleccionada={plantillaSeleccionada}
+            onSeleccionar={setPlantillaSeleccionada}
+          />
+        </div>
         
-        <PlantillaDetails
-          plantilla={plantillaActual}
-          onCopiarAlPortapapeles={copiarAlPortapapeles}
-          onEnviarPrueba={enviarPrueba}
-        />
+        <div className="xl:col-span-8">
+          <PlantillaDetails
+            plantilla={plantillaActual}
+            onCopiarAlPortapapeles={copiarAlPortapapeles}
+            onEnviarPrueba={enviarPrueba}
+          />
+        </div>
       </div>
     </div>
   );
