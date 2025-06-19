@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Users, Settings, Bell, Shield, Database, Mail, Key, Globe, Palette, FileText } from "lucide-react";
 import { ConfigSidebar } from "@/components/config/ConfigSidebar";
@@ -8,7 +7,7 @@ import { SystemSettings } from "@/components/config/SystemSettings";
 import { NotificationSettings } from "@/components/config/NotificationSettings";
 import { SecuritySettings } from "@/components/config/SecuritySettings";
 import { Button } from "@/components/ui/button";
-import { Menu } from "lucide-react";
+import { Menu, X } from "lucide-react";
 
 // Definimos todas las secciones de configuración
 const configSections = [
@@ -128,8 +127,8 @@ export default function Configuracion() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
-      {/* Sidebar */}
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 relative">
+      {/* Sidebar flotante */}
       <ConfigSidebar
         categories={configCategories}
         activeSection={activeSection}
@@ -137,33 +136,37 @@ export default function Configuracion() {
         collapsed={sidebarCollapsed}
       />
 
+      {/* Toggle button for sidebar */}
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+        className="fixed top-4 right-4 z-50 bg-white/95 backdrop-blur-md border border-gray-200 shadow-lg hover:bg-gray-50"
+      >
+        {sidebarCollapsed ? <Menu className="w-4 h-4" /> : <X className="w-4 h-4" />}
+      </Button>
+
       {/* Main Content */}
-      <div className="flex-1 flex flex-col">
-        {/* Header con toggle para sidebar */}
-        <div className="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-              className="lg:hidden"
-            >
-              <Menu className="w-4 h-4" />
-            </Button>
-            <div>
-              <h1 className="text-xl font-semibold text-gray-800">Panel de Configuración</h1>
-              <p className="text-sm text-gray-600">
-                Administra todos los aspectos de tu sistema
-              </p>
-            </div>
+      <div className="w-full">
+        {/* Header */}
+        <div className="bg-white/60 backdrop-blur-sm border-b border-gray-200/50 px-6 py-6">
+          <div className="max-w-6xl mx-auto">
+            <h1 className="text-2xl font-bold text-gray-800">Panel de Configuración</h1>
+            <p className="text-gray-600 mt-1">
+              Administra todos los aspectos de tu sistema
+            </p>
           </div>
         </div>
 
-        {/* Content Area */}
-        <ConfigContent
-          activeSection={activeSection}
-          sections={configSections}
-        />
+        {/* Content Area with proper padding to avoid sidebar overlap */}
+        <div className="pl-80 pr-6 py-6">
+          <div className="max-w-6xl">
+            <ConfigContent
+              activeSection={activeSection}
+              sections={configSections}
+            />
+          </div>
+        </div>
       </div>
     </div>
   );

@@ -46,62 +46,67 @@ export function ConfigSidebar({
 
   if (collapsed) {
     return (
-      <div className="w-16 bg-white border-r border-gray-200 flex flex-col items-center py-4 space-y-2">
-        {categories.flatMap(category => 
-          category.sections.map(section => (
-            <Button
-              key={section.id}
-              variant="ghost"
-              size="sm"
-              className={cn(
-                "w-10 h-10 p-0",
-                activeSection === section.id && "bg-blue-50 text-blue-700"
-              )}
-              onClick={() => onSectionChange(section.id)}
-            >
-              <section.icon className="w-5 h-5" />
-            </Button>
-          ))
-        )}
+      <div className="fixed top-4 left-4 z-50 w-16 bg-white/95 backdrop-blur-md border border-gray-200 rounded-xl shadow-lg flex flex-col items-center py-4 space-y-2 max-h-[calc(100vh-2rem)]">
+        <ScrollArea className="flex-1 w-full">
+          <div className="flex flex-col items-center space-y-2 px-2">
+            {categories.flatMap(category => 
+              category.sections.map(section => (
+                <Button
+                  key={section.id}
+                  variant="ghost"
+                  size="sm"
+                  className={cn(
+                    "w-10 h-10 p-0 rounded-lg hover:bg-blue-50",
+                    activeSection === section.id && "bg-blue-100 text-blue-700 shadow-sm"
+                  )}
+                  onClick={() => onSectionChange(section.id)}
+                  title={section.label}
+                >
+                  <section.icon className="w-5 h-5" />
+                </Button>
+              ))
+            )}
+          </div>
+        </ScrollArea>
       </div>
     );
   }
 
   return (
-    <div className="w-64 bg-white border-r border-gray-200 flex flex-col h-full">
-      <div className="p-4 border-b border-gray-200">
+    <div className="fixed top-4 left-4 z-50 w-72 bg-white/95 backdrop-blur-md border border-gray-200 rounded-xl shadow-lg flex flex-col max-h-[calc(100vh-2rem)]">
+      <div className="p-4 border-b border-gray-200/60 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-t-xl">
         <h2 className="text-lg font-semibold text-gray-800">Configuración</h2>
         <p className="text-sm text-gray-600 mt-1">
           Administra tu sistema
         </p>
       </div>
       
-      <ScrollArea className="flex-1">
-        <div className="p-2">
+      <ScrollArea className="flex-1 min-h-0">
+        <div className="p-3">
           {categories.map((category, categoryIndex) => (
-            <div key={category.id} className="mb-2">
+            <div key={category.id} className="mb-3">
               <Button
                 variant="ghost"
-                className="w-full justify-between p-2 h-auto font-medium text-gray-700 hover:bg-gray-50"
+                className="w-full justify-between p-3 h-auto font-medium text-gray-700 hover:bg-gray-50/80 rounded-lg"
                 onClick={() => toggleCategory(category.id)}
               >
-                <span className="text-sm">{category.label}</span>
+                <span className="text-sm font-medium">{category.label}</span>
                 {expandedCategories.includes(category.id) ? (
-                  <ChevronDown className="w-4 h-4" />
+                  <ChevronDown className="w-4 h-4 text-gray-500" />
                 ) : (
-                  <ChevronRight className="w-4 h-4" />
+                  <ChevronRight className="w-4 h-4 text-gray-500" />
                 )}
               </Button>
               
               {expandedCategories.includes(category.id) && (
-                <div className="ml-2 mt-1 space-y-1">
+                <div className="ml-2 mt-2 space-y-1">
                   {category.sections.map((section) => (
                     <Button
                       key={section.id}
                       variant="ghost"
                       className={cn(
-                        "w-full justify-start p-2 h-auto text-left hover:bg-gray-50",
-                        activeSection === section.id && "bg-blue-50 text-blue-700 hover:bg-blue-100"
+                        "w-full justify-start p-3 h-auto text-left hover:bg-gray-50/80 rounded-lg transition-all duration-200",
+                        activeSection === section.id && "bg-blue-50 text-blue-700 hover:bg-blue-100 shadow-sm border border-blue-200/50"
                       )}
                       onClick={() => onSectionChange(section.id)}
                     >
@@ -120,7 +125,7 @@ export function ConfigSidebar({
               )}
               
               {categoryIndex < categories.length - 1 && (
-                <Separator className="mt-2" />
+                <Separator className="mt-3 bg-gray-200/60" />
               )}
             </div>
           ))}
