@@ -1,5 +1,6 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Settings } from "lucide-react";
 import { UserManagement } from "./UserManagement";
 import { SystemSettings } from "./SystemSettings";
 import { NotificationSettings } from "./NotificationSettings";
