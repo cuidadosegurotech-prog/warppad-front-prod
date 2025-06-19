@@ -99,7 +99,7 @@ export default function ComponentesUI() {
             <Checkbox 
               id="terminos" 
               checked={checkboxChecked}
-              onCheckedChange={setCheckboxChecked}
+              onCheckedChange={(checked) => setCheckboxChecked(checked === true)}
             />
             <Label htmlFor="terminos">Acepto los términos y condiciones</Label>
           </div>
