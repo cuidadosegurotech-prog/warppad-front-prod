@@ -10,6 +10,7 @@ import Dashboard from "./pages/Dashboard";
 import NuevaSolicitud from "./pages/NuevaSolicitud";
 import ConsultarSolicitudes from "./pages/ConsultarSolicitudes";
 import Configuracion from "./pages/Configuracion";
+import ComponentesUI from "./pages/ComponentesUI";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -26,10 +27,9 @@ const App = () => (
           <Route path="/nueva-solicitud" element={<MainLayout><NuevaSolicitud /></MainLayout>} />
           <Route path="/consultar-solicitudes" element={<MainLayout><ConsultarSolicitudes /></MainLayout>} />
           <Route path="/configuracion" element={<MainLayout><Configuracion /></MainLayout>} />
-          {/* Redirect /app to /dashboard for convenience */}
-          <Route path="/app" element={<Navigate to="/dashboard" replace />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
+          <Route path="/componentes-ui" element={<MainLayout><ComponentesUI /></MainLayout>} />
+          <Route path="/404" element={<NotFound />} />
+          <Route path="*" element={<Navigate to="/404" replace />} />
         </Routes>
       </BrowserRouter>
     </TooltipProvider>

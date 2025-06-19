@@ -1,5 +1,5 @@
 
-import { Calendar, FileText, LayoutDashboard, Plus, Settings } from "lucide-react";
+import { Calendar, FileText, LayoutDashboard, Plus, Settings, Palette } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import {
   Sidebar,
@@ -33,6 +33,14 @@ const menuItems = [
     title: "Configuración",
     url: "/configuracion",
     icon: Settings,
+  },
+];
+
+const uiComponents = [
+  {
+    title: "Componentes UI",
+    url: "/componentes-ui",
+    icon: Palette,
   },
 ];
 
@@ -71,6 +79,30 @@ export function AppSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               {menuItems.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton 
+                    asChild
+                    isActive={location.pathname === item.url}
+                    className="mx-2 rounded-lg hover:bg-blue-800/50 data-[active=true]:bg-gradient-to-r data-[active=true]:from-yellow-500/30 data-[active=true]:to-amber-500/30 data-[active=true]:border data-[active=true]:border-yellow-400/50"
+                  >
+                    <Link to={item.url} className="flex items-center gap-3 text-blue-100 hover:text-yellow-200 data-[active=true]:text-blue-900 data-[active=true]:font-semibold">
+                      <item.icon className="w-5 h-5" />
+                      <span className="font-medium">{item.title}</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        <SidebarGroup>
+          <SidebarGroupLabel className="text-blue-200/80 px-4 py-2">
+            Desarrollo
+          </SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {uiComponents.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton 
                     asChild
