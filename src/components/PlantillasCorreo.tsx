@@ -440,7 +440,7 @@ export default function PlantillasCorreo() {
   };
 
   return (
-    <div className="max-w-6xl mx-auto space-y-6">
+    <div className="w-full max-w-7xl mx-auto p-4 space-y-6">
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
@@ -453,29 +453,29 @@ export default function PlantillasCorreo() {
         </CardHeader>
       </Card>
 
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+      <div className="flex flex-col xl:flex-row gap-6">
         {/* Sidebar con lista de plantillas */}
-        <div className="lg:col-span-1">
-          <Card>
+        <div className="xl:w-80 w-full flex-shrink-0">
+          <Card className="h-fit">
             <CardHeader>
               <CardTitle className="text-lg">Plantillas Disponibles</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-2">
+            <CardContent className="space-y-3">
               {plantillas.map((plantilla) => (
                 <div
                   key={plantilla.id}
-                  className={`p-3 rounded-lg border cursor-pointer transition-all ${
+                  className={`p-4 rounded-lg border cursor-pointer transition-all hover:shadow-md ${
                     plantillaSeleccionada === plantilla.id
-                      ? "border-blue-500 bg-blue-50"
-                      : "border-gray-200 hover:border-gray-300"
+                      ? "border-blue-500 bg-blue-50 shadow-sm"
+                      : "border-gray-200 hover:border-gray-300 hover:bg-gray-50"
                   }`}
                   onClick={() => setPlantillaSeleccionada(plantilla.id)}
                 >
-                  <div className="flex items-start gap-2">
+                  <div className="flex items-start gap-3">
                     {getIconByType(plantilla.tipo)}
                     <div className="flex-1 min-w-0">
-                      <p className="font-medium text-sm">{plantilla.titulo}</p>
-                      <Badge className={`text-xs mt-1 ${getBadgeColor(plantilla.tipo)}`}>
+                      <p className="font-medium text-sm leading-tight mb-2">{plantilla.titulo}</p>
+                      <Badge className={`text-xs ${getBadgeColor(plantilla.tipo)}`}>
                         {plantilla.tipo}
                       </Badge>
                     </div>
@@ -487,20 +487,20 @@ export default function PlantillasCorreo() {
         </div>
 
         {/* Área principal con detalles de plantilla */}
-        <div className="lg:col-span-3">
+        <div className="flex-1 min-w-0">
           <Card>
             <CardHeader>
-              <div className="flex items-start justify-between">
-                <div className="flex items-center gap-2">
+              <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+                <div className="flex items-start gap-3">
                   {getIconByType(plantillaActual.tipo)}
-                  <div>
-                    <CardTitle>{plantillaActual.titulo}</CardTitle>
-                    <CardDescription className="mt-1">
-                      Asunto: {plantillaActual.asunto}
+                  <div className="min-w-0">
+                    <CardTitle className="text-xl mb-2">{plantillaActual.titulo}</CardTitle>
+                    <CardDescription className="text-sm">
+                      <span className="font-medium">Asunto:</span> {plantillaActual.asunto}
                     </CardDescription>
                   </div>
                 </div>
-                <Badge className={getBadgeColor(plantillaActual.tipo)}>
+                <Badge className={`${getBadgeColor(plantillaActual.tipo)} flex-shrink-0`}>
                   {plantillaActual.tipo}
                 </Badge>
               </div>
@@ -515,11 +515,13 @@ export default function PlantillasCorreo() {
                 </TabsList>
 
                 <TabsContent value="preview" className="space-y-4">
-                  <div className="border rounded-lg p-4 bg-white max-h-96 overflow-y-auto">
-                    <div dangerouslySetInnerHTML={{ __html: plantillaActual.contenido }} />
+                  <div className="border rounded-lg bg-white overflow-hidden">
+                    <div className="max-h-96 overflow-y-auto p-4">
+                      <div dangerouslySetInnerHTML={{ __html: plantillaActual.contenido }} />
+                    </div>
                   </div>
                   
-                  <div className="flex gap-2">
+                  <div className="flex flex-wrap gap-2">
                     <Button
                       onClick={() => copiarAlPortapapeles(plantillaActual.contenido)}
                       variant="outline"
@@ -539,8 +541,8 @@ export default function PlantillasCorreo() {
                 </TabsContent>
 
                 <TabsContent value="html" className="space-y-4">
-                  <div className="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto">
-                    <pre className="text-sm">
+                  <div className="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-auto">
+                    <pre className="text-sm whitespace-pre-wrap">
                       <code>{plantillaActual.contenido}</code>
                     </pre>
                   </div>
@@ -557,20 +559,21 @@ export default function PlantillasCorreo() {
 
                 <TabsContent value="variables" className="space-y-4">
                   <div>
-                    <h3 className="font-semibold mb-3">Variables disponibles en esta plantilla:</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                    <h3 className="font-semibold mb-4">Variables disponibles en esta plantilla:</h3>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       {plantillaActual.variables.map((variable) => (
                         <div
                           key={variable}
                           className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border"
                         >
-                          <code className="text-sm font-mono text-blue-600">
+                          <code className="text-sm font-mono text-blue-600 break-all">
                             {`{${variable}}`}
                           </code>
                           <Button
                             size="sm"
                             variant="ghost"
                             onClick={() => copiarAlPortapapeles(`{${variable}}`)}
+                            className="ml-2 flex-shrink-0"
                           >
                             <Copy className="w-3 h-3" />
                           </Button>
@@ -583,7 +586,7 @@ export default function PlantillasCorreo() {
                     <h4 className="font-medium text-blue-900 mb-2">💡 Cómo usar las variables:</h4>
                     <ul className="text-sm text-blue-800 space-y-1">
                       <li>• Las variables se reemplazan automáticamente al enviar el correo</li>
-                      <li>• Usa el formato <code>{`{NOMBRE_VARIABLE}`}</code> en el contenido</li>
+                      <li>• Usa el formato <code className="bg-blue-100 px-1 rounded">{`{NOMBRE_VARIABLE}`}</code> en el contenido</li>
                       <li>• Las variables distinguen entre mayúsculas y minúsculas</li>
                       <li>• Si una variable no está definida, se mostrará vacía</li>
                     </ul>
