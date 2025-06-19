@@ -21,11 +21,11 @@ export function PlantillaDetails({ plantilla, onCopiarAlPortapapeles, onEnviarPr
       <Card>
         <CardHeader>
           <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
-            <div className="flex items-start gap-3">
-              <IconComponent className="w-5 h-5 text-green-600" />
-              <div className="min-w-0">
-                <CardTitle className="text-xl mb-2">{plantilla.titulo}</CardTitle>
-                <CardDescription className="text-sm">
+            <div className="flex items-start gap-3 min-w-0">
+              <IconComponent className="w-5 h-5 text-green-600 flex-shrink-0" />
+              <div className="min-w-0 flex-1">
+                <CardTitle className="text-xl mb-2 break-words">{plantilla.titulo}</CardTitle>
+                <CardDescription className="text-sm break-words">
                   <span className="font-medium">Asunto:</span> {plantilla.asunto}
                 </CardDescription>
               </div>
@@ -39,9 +39,9 @@ export function PlantillaDetails({ plantilla, onCopiarAlPortapapeles, onEnviarPr
         <CardContent>
           <Tabs defaultValue="preview" className="w-full">
             <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="preview">Vista Previa</TabsTrigger>
-              <TabsTrigger value="html">Código HTML</TabsTrigger>
-              <TabsTrigger value="variables">Variables</TabsTrigger>
+              <TabsTrigger value="preview" className="text-xs sm:text-sm">Vista Previa</TabsTrigger>
+              <TabsTrigger value="html" className="text-xs sm:text-sm">Código HTML</TabsTrigger>
+              <TabsTrigger value="variables" className="text-xs sm:text-sm">Variables</TabsTrigger>
             </TabsList>
 
             <TabsContent value="preview" className="space-y-4">
@@ -51,18 +51,20 @@ export function PlantillaDetails({ plantilla, onCopiarAlPortapapeles, onEnviarPr
                 </div>
               </div>
               
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-col sm:flex-row gap-2">
                 <Button
                   onClick={() => onCopiarAlPortapapeles(plantilla.contenido)}
                   variant="outline"
-                  className="flex items-center gap-2"
+                  className="flex items-center gap-2 justify-center"
+                  size="sm"
                 >
                   <Copy className="w-4 h-4" />
                   Copiar HTML
                 </Button>
                 <Button
                   onClick={() => onEnviarPrueba(plantilla)}
-                  className="flex items-center gap-2"
+                  className="flex items-center gap-2 justify-center"
+                  size="sm"
                 >
                   <Send className="w-4 h-4" />
                   Enviar Prueba
@@ -71,8 +73,8 @@ export function PlantillaDetails({ plantilla, onCopiarAlPortapapeles, onEnviarPr
             </TabsContent>
 
             <TabsContent value="html" className="space-y-4">
-              <div className="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-auto">
-                <pre className="text-sm whitespace-pre-wrap">
+              <div className="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-auto max-h-96">
+                <pre className="text-xs whitespace-pre-wrap break-words">
                   <code>{plantilla.contenido}</code>
                 </pre>
               </div>
@@ -81,6 +83,7 @@ export function PlantillaDetails({ plantilla, onCopiarAlPortapapeles, onEnviarPr
                 onClick={() => onCopiarAlPortapapeles(plantilla.contenido)}
                 variant="outline"
                 className="flex items-center gap-2"
+                size="sm"
               >
                 <Copy className="w-4 h-4" />
                 Copiar Código
@@ -90,20 +93,20 @@ export function PlantillaDetails({ plantilla, onCopiarAlPortapapeles, onEnviarPr
             <TabsContent value="variables" className="space-y-4">
               <div>
                 <h3 className="font-semibold mb-4">Variables disponibles en esta plantilla:</h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 gap-3">
                   {plantilla.variables.map((variable) => (
                     <div
                       key={variable}
-                      className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border"
+                      className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border gap-2"
                     >
-                      <code className="text-sm font-mono text-blue-600 break-all">
+                      <code className="text-sm font-mono text-blue-600 break-all flex-1">
                         {`{${variable}}`}
                       </code>
                       <Button
                         size="sm"
                         variant="ghost"
                         onClick={() => onCopiarAlPortapapeles(`{${variable}}`)}
-                        className="ml-2 flex-shrink-0"
+                        className="flex-shrink-0"
                       >
                         <Copy className="w-3 h-3" />
                       </Button>

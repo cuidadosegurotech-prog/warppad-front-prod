@@ -12,7 +12,7 @@ interface PlantillasListProps {
 
 export function PlantillasList({ plantillas, plantillaSeleccionada, onSeleccionar }: PlantillasListProps) {
   return (
-    <div className="xl:w-80 w-full flex-shrink-0">
+    <div className="lg:w-80 w-full flex-shrink-0">
       <Card className="h-fit">
         <CardHeader>
           <CardTitle className="text-lg">Plantillas Disponibles</CardTitle>
@@ -31,9 +31,9 @@ export function PlantillasList({ plantillas, plantillaSeleccionada, onSelecciona
                 onClick={() => onSeleccionar(plantilla.id)}
               >
                 <div className="flex items-start gap-3">
-                  <IconComponent className="w-5 h-5 text-green-600" />
+                  <IconComponent className="w-5 h-5 text-green-600 flex-shrink-0" />
                   <div className="flex-1 min-w-0">
-                    <p className="font-medium text-sm leading-tight mb-2">{plantilla.titulo}</p>
+                    <p className="font-medium text-sm leading-tight mb-2 truncate">{plantilla.titulo}</p>
                     <Badge className={`text-xs ${getBadgeColor(plantilla.tipo)}`}>
                       {plantilla.tipo}
                     </Badge>
