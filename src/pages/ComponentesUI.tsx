@@ -13,9 +13,8 @@ import { Separator } from "@/components/ui/separator";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "@/components/ui/sonner";
-import { Bell, CheckCircle, AlertCircle, Info, X, Mail, FileText, Settings } from "lucide-react";
+import { Bell, CheckCircle, AlertCircle, Info, X, FileText, Settings } from "lucide-react";
 import FormularioCompleto from "@/components/FormularioCompleto";
-import PlantillasCorreo from "@/components/PlantillasCorreo";
 
 export default function ComponentesUI() {
   const [progress, setProgress] = useState(60);
@@ -58,7 +57,7 @@ export default function ComponentesUI() {
 
       {/* Tabs principales */}
       <Tabs defaultValue="componentes" className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="componentes" className="flex items-center gap-2">
             <Settings className="w-4 h-4" />
             Componentes
@@ -66,10 +65,6 @@ export default function ComponentesUI() {
           <TabsTrigger value="formulario" className="flex items-center gap-2">
             <FileText className="w-4 h-4" />
             Formulario Completo
-          </TabsTrigger>
-          <TabsTrigger value="plantillas" className="flex items-center gap-2">
-            <Mail className="w-4 h-4" />
-            Plantillas de Correo
           </TabsTrigger>
         </TabsList>
 
@@ -388,10 +383,6 @@ export default function ComponentesUI() {
 
         <TabsContent value="formulario" className="mt-6">
           <FormularioCompleto />
-        </TabsContent>
-
-        <TabsContent value="plantillas" className="mt-6">
-          <PlantillasCorreo />
         </TabsContent>
       </Tabs>
     </div>
