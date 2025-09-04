@@ -179,7 +179,7 @@ export default function ConsultarSolicitudes() {
   const renderCardsView = () => (
     <div className="space-y-4">
       {currentSolicitudes.length === 0 ? (
-        <div className="border border-slate-200 rounded-lg bg-white p-12 text-center">
+        <div className="p-12 text-center">
           <div className="flex flex-col items-center gap-3">
             <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center">
               <Search className="w-6 h-6 text-slate-400" />
@@ -194,10 +194,10 @@ export default function ConsultarSolicitudes() {
         currentSolicitudes.map((solicitud) => (
           <div 
             key={solicitud.id} 
-            className={`border rounded-lg bg-white p-4 transition-colors ${
+            className={`p-4 transition-colors ${
               isOverdue(solicitud.fechaCreacion, solicitud.estado) 
-                ? 'border-red-200 bg-red-50/30' 
-                : 'border-slate-200 hover:bg-slate-50'
+                ? 'bg-red-50/30' 
+                : 'hover:bg-slate-50'
             }`}
           >
             <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
@@ -261,97 +261,95 @@ export default function ConsultarSolicitudes() {
   );
 
   const renderGridView = () => (
-    <div className="border border-slate-200 rounded-lg bg-white overflow-hidden">
-      <div className="overflow-x-auto">
-        <Table>
-          <TableHeader>
-            <TableRow className="hover:bg-transparent border-slate-200 bg-slate-50">
-              <TableHead className="text-slate-700 font-semibold py-3 text-sm">ID</TableHead>
-              <TableHead className="text-slate-700 font-semibold py-3 text-sm">Título</TableHead>
-              <TableHead className="text-slate-700 font-semibold py-3 text-sm">Estado</TableHead>
-              <TableHead className="text-slate-700 font-semibold py-3 text-sm">Prioridad</TableHead>
-              <TableHead className="text-slate-700 font-semibold py-3 text-sm">Tipo</TableHead>
-              <TableHead className="text-slate-700 font-semibold py-3 text-sm">Fecha</TableHead>
-              <TableHead className="text-slate-700 font-semibold py-3 text-sm">Tiempo</TableHead>
-              <TableHead className="text-slate-700 font-semibold py-3 text-sm">Acciones</TableHead>
+    <div className="overflow-x-auto">
+      <Table>
+        <TableHeader>
+          <TableRow className="hover:bg-transparent border-slate-200 bg-slate-50">
+            <TableHead className="text-slate-700 font-semibold py-3 text-sm">ID</TableHead>
+            <TableHead className="text-slate-700 font-semibold py-3 text-sm">Título</TableHead>
+            <TableHead className="text-slate-700 font-semibold py-3 text-sm">Estado</TableHead>
+            <TableHead className="text-slate-700 font-semibold py-3 text-sm">Prioridad</TableHead>
+            <TableHead className="text-slate-700 font-semibold py-3 text-sm">Tipo</TableHead>
+            <TableHead className="text-slate-700 font-semibold py-3 text-sm">Fecha</TableHead>
+            <TableHead className="text-slate-700 font-semibold py-3 text-sm">Tiempo</TableHead>
+            <TableHead className="text-slate-700 font-semibold py-3 text-sm">Acciones</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {currentSolicitudes.length === 0 ? (
+            <TableRow>
+              <TableCell colSpan={8} className="py-12">
+                <div className="flex flex-col items-center gap-3">
+                  <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center">
+                    <Search className="w-6 h-6 text-slate-400" />
+                  </div>
+                  <div className="text-center">
+                    <h3 className="text-base font-semibold text-slate-800 mb-1">No se encontraron solicitudes</h3>
+                    <p className="text-sm text-slate-600">Intenta con otros términos de búsqueda</p>
+                  </div>
+                </div>
+              </TableCell>
             </TableRow>
-          </TableHeader>
-          <TableBody>
-            {currentSolicitudes.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={8} className="py-12">
-                  <div className="flex flex-col items-center gap-3">
-                    <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center">
-                      <Search className="w-6 h-6 text-slate-400" />
-                    </div>
-                    <div className="text-center">
-                      <h3 className="text-base font-semibold text-slate-800 mb-1">No se encontraron solicitudes</h3>
-                      <p className="text-sm text-slate-600">Intenta con otros términos de búsqueda</p>
-                    </div>
+          ) : (
+            currentSolicitudes.map((solicitud) => (
+              <TableRow 
+                key={solicitud.id} 
+                className={`hover:bg-slate-50 border-slate-200 transition-colors ${
+                  isOverdue(solicitud.fechaCreacion, solicitud.estado) 
+                    ? 'bg-red-50/50 hover:bg-red-50' 
+                    : ''
+                }`}
+              >
+                <TableCell className="font-mono text-slate-600 py-3">
+                  <div className="flex items-center gap-2">
+                    <span className="bg-slate-50 px-2 py-1 rounded text-xs">{solicitud.id}</span>
+                    {isOverdue(solicitud.fechaCreacion, solicitud.estado) && (
+                      <AlertTriangle className="w-3 h-3 text-red-600" />
+                    )}
                   </div>
                 </TableCell>
+                <TableCell className="font-medium text-slate-800 max-w-xs py-3">
+                  <div className="truncate text-sm" title={solicitud.titulo}>
+                    {solicitud.titulo}
+                  </div>
+                </TableCell>
+                <TableCell className="py-3">
+                  <div className="flex items-center gap-2">
+                    {getStatusIcon(solicitud.estado)}
+                    <Badge variant="outline" className={`${getStatusColor(solicitud.estado)} text-xs`}>
+                      {solicitud.estado}
+                    </Badge>
+                  </div>
+                </TableCell>
+                <TableCell className="py-3">
+                  <Badge variant="outline" className={`${getPriorityColor(solicitud.prioridad)} text-xs`}>
+                    {solicitud.prioridad}
+                  </Badge>
+                </TableCell>
+                <TableCell className="py-3">
+                  <Badge variant="outline" className="bg-cyan-50 text-cyan-700 border-cyan-200 text-xs">
+                    {solicitud.tipo}
+                  </Badge>
+                </TableCell>
+                <TableCell className="text-slate-600 text-xs py-3">
+                  {new Date(solicitud.fechaCreacion).toLocaleDateString()}
+                </TableCell>
+                <TableCell className="text-slate-600 text-xs py-3">
+                  <span className="text-blue-600 font-semibold">
+                    {getTimeElapsed(solicitud.fechaCreacion)}
+                  </span>
+                </TableCell>
+                <TableCell className="py-3">
+                  <Button variant="outline" size="sm">
+                    <Eye className="w-3 h-3 mr-1" />
+                    Ver
+                  </Button>
+                </TableCell>
               </TableRow>
-            ) : (
-              currentSolicitudes.map((solicitud) => (
-                <TableRow 
-                  key={solicitud.id} 
-                  className={`hover:bg-slate-50 border-slate-200 transition-colors ${
-                    isOverdue(solicitud.fechaCreacion, solicitud.estado) 
-                      ? 'bg-red-50/50 hover:bg-red-50' 
-                      : ''
-                  }`}
-                >
-                  <TableCell className="font-mono text-slate-600 py-3">
-                    <div className="flex items-center gap-2">
-                      <span className="bg-slate-50 px-2 py-1 rounded text-xs">{solicitud.id}</span>
-                      {isOverdue(solicitud.fechaCreacion, solicitud.estado) && (
-                        <AlertTriangle className="w-3 h-3 text-red-600" />
-                      )}
-                    </div>
-                  </TableCell>
-                  <TableCell className="font-medium text-slate-800 max-w-xs py-3">
-                    <div className="truncate text-sm" title={solicitud.titulo}>
-                      {solicitud.titulo}
-                    </div>
-                  </TableCell>
-                  <TableCell className="py-3">
-                    <div className="flex items-center gap-2">
-                      {getStatusIcon(solicitud.estado)}
-                      <Badge variant="outline" className={`${getStatusColor(solicitud.estado)} text-xs`}>
-                        {solicitud.estado}
-                      </Badge>
-                    </div>
-                  </TableCell>
-                  <TableCell className="py-3">
-                    <Badge variant="outline" className={`${getPriorityColor(solicitud.prioridad)} text-xs`}>
-                      {solicitud.prioridad}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="py-3">
-                    <Badge variant="outline" className="bg-cyan-50 text-cyan-700 border-cyan-200 text-xs">
-                      {solicitud.tipo}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="text-slate-600 text-xs py-3">
-                    {new Date(solicitud.fechaCreacion).toLocaleDateString()}
-                  </TableCell>
-                  <TableCell className="text-slate-600 text-xs py-3">
-                    <span className="text-blue-600 font-semibold">
-                      {getTimeElapsed(solicitud.fechaCreacion)}
-                    </span>
-                  </TableCell>
-                  <TableCell className="py-3">
-                    <Button variant="outline" size="sm">
-                      <Eye className="w-3 h-3 mr-1" />
-                      Ver
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-      </div>
+            ))
+          )}
+        </TableBody>
+      </Table>
     </div>
   );
 
@@ -371,17 +369,13 @@ export default function ConsultarSolicitudes() {
         {/* Estadísticas compactas */}
         <div className="grid grid-cols-5 gap-3">
           {[
-            { label: "Total", value: solicitudes.length, color: "text-blue-600", bgColor: "bg-blue-50" },
-            { label: "Completadas", value: solicitudes.filter(s => s.estado === "Completado").length, color: "text-green-600", bgColor: "bg-green-50" },
-            { label: "En progreso", value: solicitudes.filter(s => s.estado === "En progreso").length, color: "text-yellow-600", bgColor: "bg-yellow-50" },
-            { label: "Pendientes", value: solicitudes.filter(s => s.estado === "Pendiente").length, color: "text-orange-600", bgColor: "bg-orange-50" },
-            { label: "Vencidas", value: solicitudesVencidas.length, color: "text-red-600", bgColor: "bg-red-50" },
+            { label: "Total", value: solicitudes.length, color: "text-blue-600" },
+            { label: "Completadas", value: solicitudes.filter(s => s.estado === "Completado").length, color: "text-green-600" },
+            { label: "En progreso", value: solicitudes.filter(s => s.estado === "En progreso").length, color: "text-yellow-600" },
+            { label: "Pendientes", value: solicitudes.filter(s => s.estado === "Pendiente").length, color: "text-orange-600" },
+            { label: "Vencidas", value: solicitudesVencidas.length, color: "text-red-600" },
           ].map((stat) => (
-            <div key={stat.label} className={`rounded-lg border p-3 text-center transition-colors ${
-              stat.label === "Vencidas" && stat.value > 0 
-                ? 'border-red-200 bg-red-50/50' 
-                : 'border-slate-200 bg-white hover:bg-slate-50'
-            }`}>
+            <div key={stat.label} className="p-3 text-center">
               <div className={`text-2xl font-bold ${stat.color} mb-1`}>
                 {stat.value}
               </div>
