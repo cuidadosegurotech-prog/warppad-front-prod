@@ -177,353 +177,305 @@ export default function ConsultarSolicitudes() {
   };
 
   const renderCardsView = () => (
-    <div className="w-full">
-      <div className="grid gap-6">
-        {currentSolicitudes.length === 0 ? (
-          <Card className="bg-white/90 backdrop-blur-sm border border-slate-200/60 shadow-lg">
-            <div className="p-12 text-center">
-              <div className="flex flex-col items-center gap-4">
-                <div className="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center">
-                  <Search className="w-8 h-8 text-slate-400" />
+    <div className="space-y-4">
+      {currentSolicitudes.length === 0 ? (
+        <div className="border border-slate-200 rounded-lg bg-white p-12 text-center">
+          <div className="flex flex-col items-center gap-3">
+            <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center">
+              <Search className="w-6 h-6 text-slate-400" />
+            </div>
+            <div>
+              <h3 className="text-base font-semibold text-slate-800 mb-1">No se encontraron solicitudes</h3>
+              <p className="text-sm text-slate-600">Intenta con otros términos de búsqueda</p>
+            </div>
+          </div>
+        </div>
+      ) : (
+        currentSolicitudes.map((solicitud) => (
+          <div 
+            key={solicitud.id} 
+            className={`border rounded-lg bg-white p-4 transition-colors ${
+              isOverdue(solicitud.fechaCreacion, solicitud.estado) 
+                ? 'border-red-200 bg-red-50/30' 
+                : 'border-slate-200 hover:bg-slate-50'
+            }`}
+          >
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+              <div className="flex-1 space-y-3">
+                <div className="flex items-center gap-3">
+                  {getStatusIcon(solicitud.estado)}
+                  <span className="text-xs font-mono text-slate-600 bg-slate-50 px-2 py-1 rounded">
+                    {solicitud.id}
+                  </span>
+                  {isOverdue(solicitud.fechaCreacion, solicitud.estado) && (
+                    <div className="flex items-center gap-1 text-red-600 bg-red-50 px-2 py-1 rounded">
+                      <AlertTriangle className="w-3 h-3" />
+                      <span className="text-xs font-semibold">VENCIDA</span>
+                    </div>
+                  )}
                 </div>
-                <div>
-                  <h3 className="text-lg font-semibold text-slate-800 mb-2">No se encontraron solicitudes</h3>
-                  <p className="text-slate-600">Intenta con otros términos de búsqueda</p>
+                
+                <h3 className="text-lg font-semibold text-slate-800 leading-tight">{solicitud.titulo}</h3>
+                
+                <div className="flex flex-wrap gap-2">
+                  <Badge variant="outline" className={`${getStatusColor(solicitud.estado)} text-xs`}>
+                    {solicitud.estado}
+                  </Badge>
+                  <Badge variant="outline" className={`${getPriorityColor(solicitud.prioridad)} text-xs`}>
+                    {solicitud.prioridad}
+                  </Badge>
+                  <Badge variant="outline" className="bg-cyan-50 text-cyan-700 border-cyan-200 text-xs">
+                    {solicitud.tipo}
+                  </Badge>
                 </div>
+                
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 text-sm">
+                  <div>
+                    <span className="text-slate-500 font-medium text-xs">Creado</span>
+                    <div className="text-slate-700">{new Date(solicitud.fechaCreacion).toLocaleDateString()}</div>
+                  </div>
+                  <div>
+                    <span className="text-slate-500 font-medium text-xs">Actualizado</span>
+                    <div className="text-slate-700">{new Date(solicitud.fechaActualizacion).toLocaleDateString()}</div>
+                  </div>
+                  <div>
+                    <span className="text-slate-500 font-medium text-xs">Tiempo transcurrido</span>
+                    <div className="text-blue-600 font-semibold">
+                      {getTimeElapsed(solicitud.fechaCreacion)}
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="flex lg:flex-col gap-2">
+                <Button variant="outline" size="sm">
+                  <Eye className="w-3 h-3 mr-1" />
+                  Ver detalles
+                </Button>
               </div>
             </div>
-          </Card>
-        ) : (
-          currentSolicitudes.map((solicitud) => (
-            <Card 
-              key={solicitud.id} 
-              className={`bg-white/90 backdrop-blur-sm border border-slate-200/60 shadow-lg hover:shadow-xl transition-all duration-300 ${
-                isOverdue(solicitud.fechaCreacion, solicitud.estado) 
-                  ? 'ring-2 ring-red-400/50 border-red-300' 
-                  : 'hover:border-blue-300/50'
-              }`}
-            >
-              <div className="p-6">
-                <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-                  <div className="flex-1 space-y-4">
-                    <div className="flex items-start gap-3">
-                      <div className="flex items-center gap-3">
-                        {getStatusIcon(solicitud.estado)}
-                        <span className="text-sm font-mono text-slate-600 bg-slate-50 px-2 py-1 rounded">
-                          {solicitud.id}
-                        </span>
-                        {isOverdue(solicitud.fechaCreacion, solicitud.estado) && (
-                          <div className="flex items-center gap-1 text-red-600 bg-red-50 px-2 py-1 rounded">
-                            <AlertTriangle className="w-4 h-4" />
-                            <span className="text-xs font-semibold">VENCIDA</span>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                    
-                    <h3 className="text-xl font-bold text-slate-800 leading-tight">{solicitud.titulo}</h3>
-                    
-                    <div className="flex flex-wrap gap-3">
-                      <Badge variant="outline" className={`${getStatusColor(solicitud.estado)} font-medium`}>
-                        {solicitud.estado}
-                      </Badge>
-                      <Badge variant="outline" className={`${getPriorityColor(solicitud.prioridad)} font-medium`}>
-                        {solicitud.prioridad}
-                      </Badge>
-                      <Badge variant="outline" className="bg-cyan-50 text-cyan-700 border-cyan-200 font-medium">
-                        {solicitud.tipo}
-                      </Badge>
-                    </div>
-                    
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
-                      <div className="flex flex-col gap-1">
-                        <span className="text-slate-500 font-medium">Creado</span>
-                        <span className="text-slate-700">{new Date(solicitud.fechaCreacion).toLocaleDateString()}</span>
-                      </div>
-                      <div className="flex flex-col gap-1">
-                        <span className="text-slate-500 font-medium">Actualizado</span>
-                        <span className="text-slate-700">{new Date(solicitud.fechaActualizacion).toLocaleDateString()}</span>
-                      </div>
-                      <div className="flex flex-col gap-1">
-                        <span className="text-slate-500 font-medium">Tiempo transcurrido</span>
-                        <span className="text-blue-600 font-semibold">
-                          {getTimeElapsed(solicitud.fechaCreacion)}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="flex lg:flex-col gap-3">
-                    <Button
-                      variant="outline"
-                      size="default"
-                      className="bg-white border-slate-300 text-slate-700 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-300 transition-colors"
-                    >
-                      <Eye className="w-4 h-4 mr-2" />
-                      Ver detalles
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            </Card>
-          ))
-        )}
-      </div>
+          </div>
+        ))
+      )}
     </div>
   );
 
   const renderGridView = () => (
-    <div className="w-full">
-      <Card className="bg-white/90 backdrop-blur-sm border border-slate-200/60 shadow-lg overflow-hidden">
-        <div className="overflow-x-auto">
-          <Table>
-            <TableHeader>
-              <TableRow className="hover:bg-transparent border-slate-200 bg-slate-50/50">
-                <TableHead className="text-slate-700 font-bold py-4">ID</TableHead>
-                <TableHead className="text-slate-700 font-bold py-4">Título</TableHead>
-                <TableHead className="text-slate-700 font-bold py-4">Estado</TableHead>
-                <TableHead className="text-slate-700 font-bold py-4">Prioridad</TableHead>
-                <TableHead className="text-slate-700 font-bold py-4">Tipo</TableHead>
-                <TableHead className="text-slate-700 font-bold py-4">Fecha</TableHead>
-                <TableHead className="text-slate-700 font-bold py-4">Tiempo</TableHead>
-                <TableHead className="text-slate-700 font-bold py-4">Acciones</TableHead>
+    <div className="border border-slate-200 rounded-lg bg-white overflow-hidden">
+      <div className="overflow-x-auto">
+        <Table>
+          <TableHeader>
+            <TableRow className="hover:bg-transparent border-slate-200 bg-slate-50">
+              <TableHead className="text-slate-700 font-semibold py-3 text-sm">ID</TableHead>
+              <TableHead className="text-slate-700 font-semibold py-3 text-sm">Título</TableHead>
+              <TableHead className="text-slate-700 font-semibold py-3 text-sm">Estado</TableHead>
+              <TableHead className="text-slate-700 font-semibold py-3 text-sm">Prioridad</TableHead>
+              <TableHead className="text-slate-700 font-semibold py-3 text-sm">Tipo</TableHead>
+              <TableHead className="text-slate-700 font-semibold py-3 text-sm">Fecha</TableHead>
+              <TableHead className="text-slate-700 font-semibold py-3 text-sm">Tiempo</TableHead>
+              <TableHead className="text-slate-700 font-semibold py-3 text-sm">Acciones</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {currentSolicitudes.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={8} className="py-12">
+                  <div className="flex flex-col items-center gap-3">
+                    <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center">
+                      <Search className="w-6 h-6 text-slate-400" />
+                    </div>
+                    <div className="text-center">
+                      <h3 className="text-base font-semibold text-slate-800 mb-1">No se encontraron solicitudes</h3>
+                      <p className="text-sm text-slate-600">Intenta con otros términos de búsqueda</p>
+                    </div>
+                  </div>
+                </TableCell>
               </TableRow>
-            </TableHeader>
-            <TableBody>
-              {currentSolicitudes.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={8} className="py-16">
-                    <div className="flex flex-col items-center gap-4">
-                      <div className="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center">
-                        <Search className="w-8 h-8 text-slate-400" />
-                      </div>
-                      <div className="text-center">
-                        <h3 className="text-lg font-semibold text-slate-800 mb-2">No se encontraron solicitudes</h3>
-                        <p className="text-slate-600">Intenta con otros términos de búsqueda</p>
-                      </div>
+            ) : (
+              currentSolicitudes.map((solicitud) => (
+                <TableRow 
+                  key={solicitud.id} 
+                  className={`hover:bg-slate-50 border-slate-200 transition-colors ${
+                    isOverdue(solicitud.fechaCreacion, solicitud.estado) 
+                      ? 'bg-red-50/50 hover:bg-red-50' 
+                      : ''
+                  }`}
+                >
+                  <TableCell className="font-mono text-slate-600 py-3">
+                    <div className="flex items-center gap-2">
+                      <span className="bg-slate-50 px-2 py-1 rounded text-xs">{solicitud.id}</span>
+                      {isOverdue(solicitud.fechaCreacion, solicitud.estado) && (
+                        <AlertTriangle className="w-3 h-3 text-red-600" />
+                      )}
                     </div>
                   </TableCell>
+                  <TableCell className="font-medium text-slate-800 max-w-xs py-3">
+                    <div className="truncate text-sm" title={solicitud.titulo}>
+                      {solicitud.titulo}
+                    </div>
+                  </TableCell>
+                  <TableCell className="py-3">
+                    <div className="flex items-center gap-2">
+                      {getStatusIcon(solicitud.estado)}
+                      <Badge variant="outline" className={`${getStatusColor(solicitud.estado)} text-xs`}>
+                        {solicitud.estado}
+                      </Badge>
+                    </div>
+                  </TableCell>
+                  <TableCell className="py-3">
+                    <Badge variant="outline" className={`${getPriorityColor(solicitud.prioridad)} text-xs`}>
+                      {solicitud.prioridad}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="py-3">
+                    <Badge variant="outline" className="bg-cyan-50 text-cyan-700 border-cyan-200 text-xs">
+                      {solicitud.tipo}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="text-slate-600 text-xs py-3">
+                    {new Date(solicitud.fechaCreacion).toLocaleDateString()}
+                  </TableCell>
+                  <TableCell className="text-slate-600 text-xs py-3">
+                    <span className="text-blue-600 font-semibold">
+                      {getTimeElapsed(solicitud.fechaCreacion)}
+                    </span>
+                  </TableCell>
+                  <TableCell className="py-3">
+                    <Button variant="outline" size="sm">
+                      <Eye className="w-3 h-3 mr-1" />
+                      Ver
+                    </Button>
+                  </TableCell>
                 </TableRow>
-              ) : (
-                currentSolicitudes.map((solicitud) => (
-                  <TableRow 
-                    key={solicitud.id} 
-                    className={`hover:bg-slate-50/80 border-slate-200 transition-colors ${
-                      isOverdue(solicitud.fechaCreacion, solicitud.estado) 
-                        ? 'bg-red-50/50 hover:bg-red-50/80' 
-                        : ''
-                    }`}
-                  >
-                    <TableCell className="font-mono text-slate-600 py-4">
-                      <div className="flex items-center gap-2">
-                        <span className="bg-slate-50 px-2 py-1 rounded text-xs">{solicitud.id}</span>
-                        {isOverdue(solicitud.fechaCreacion, solicitud.estado) && (
-                          <AlertTriangle className="w-4 h-4 text-red-600" />
-                        )}
-                      </div>
-                    </TableCell>
-                    <TableCell className="font-semibold text-slate-800 max-w-xs py-4">
-                      <div className="truncate" title={solicitud.titulo}>
-                        {solicitud.titulo}
-                      </div>
-                    </TableCell>
-                    <TableCell className="py-4">
-                      <div className="flex items-center gap-2">
-                        {getStatusIcon(solicitud.estado)}
-                        <Badge variant="outline" className={`${getStatusColor(solicitud.estado)} font-medium text-xs`}>
-                          {solicitud.estado}
-                        </Badge>
-                      </div>
-                    </TableCell>
-                    <TableCell className="py-4">
-                      <Badge variant="outline" className={`${getPriorityColor(solicitud.prioridad)} font-medium text-xs`}>
-                        {solicitud.prioridad}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="py-4">
-                      <Badge variant="outline" className="bg-cyan-50 text-cyan-700 border-cyan-200 font-medium text-xs">
-                        {solicitud.tipo}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-slate-600 text-sm py-4">
-                      {new Date(solicitud.fechaCreacion).toLocaleDateString()}
-                    </TableCell>
-                    <TableCell className="text-slate-600 text-sm py-4">
-                      <span className="text-blue-600 font-semibold">
-                        {getTimeElapsed(solicitud.fechaCreacion)}
-                      </span>
-                    </TableCell>
-                    <TableCell className="py-4">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="bg-white border-slate-300 text-slate-700 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-300"
-                      >
-                        <Eye className="w-4 h-4 mr-1" />
-                        Ver
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
-        </div>
-      </Card>
+              ))
+            )}
+          </TableBody>
+        </Table>
+      </div>
     </div>
   );
 
   return (
-    <div className="w-full max-w-7xl mx-auto">
-      <div className="space-y-8">
-        {/* Header centrado */}
+    <div className="container mx-auto px-4 py-6 max-w-7xl">
+      <div className="space-y-6">
+        {/* Header */}
         <div className="text-center space-y-3">
-          <h1 className="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-slate-800 via-blue-800 to-indigo-800 bg-clip-text text-transparent">
+          <h1 className="text-3xl lg:text-4xl font-bold text-slate-900">
             Consultar Solicitudes
           </h1>
-          <p className="text-lg text-slate-600 max-w-2xl mx-auto">
-            Revisa el estado de todas tus solicitudes de automatización en un solo lugar
+          <p className="text-base text-slate-600">
+            Revisa el estado de todas tus solicitudes de automatización
           </p>
         </div>
 
-        {/* Alerta para solicitudes vencidas centrada */}
+        {/* Estadísticas compactas */}
+        <div className="grid grid-cols-5 gap-3">
+          {[
+            { label: "Total", value: solicitudes.length, color: "text-blue-600", bgColor: "bg-blue-50" },
+            { label: "Completadas", value: solicitudes.filter(s => s.estado === "Completado").length, color: "text-green-600", bgColor: "bg-green-50" },
+            { label: "En progreso", value: solicitudes.filter(s => s.estado === "En progreso").length, color: "text-yellow-600", bgColor: "bg-yellow-50" },
+            { label: "Pendientes", value: solicitudes.filter(s => s.estado === "Pendiente").length, color: "text-orange-600", bgColor: "bg-orange-50" },
+            { label: "Vencidas", value: solicitudesVencidas.length, color: "text-red-600", bgColor: "bg-red-50" },
+          ].map((stat) => (
+            <div key={stat.label} className={`rounded-lg border p-3 text-center transition-colors ${
+              stat.label === "Vencidas" && stat.value > 0 
+                ? 'border-red-200 bg-red-50/50' 
+                : 'border-slate-200 bg-white hover:bg-slate-50'
+            }`}>
+              <div className={`text-2xl font-bold ${stat.color} mb-1`}>
+                {stat.value}
+              </div>
+              <p className="text-xs font-medium text-slate-600">{stat.label}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* Alerta para solicitudes vencidas */}
         {solicitudesVencidas.length > 0 && (
-          <div className="max-w-4xl mx-auto">
-            <Alert className="border-red-400 bg-red-50/80 shadow-lg">
-              <AlertTriangle className="h-5 w-5 text-red-600" />
-              <AlertDescription className="text-red-800">
-                <div className="flex flex-col gap-2">
-                  <div className="font-semibold">
-                    ¡Atención! Tienes {solicitudesVencidas.length} solicitud{solicitudesVencidas.length > 1 ? 'es' : ''} vencida{solicitudesVencidas.length > 1 ? 's' : ''} que requiere{solicitudesVencidas.length > 1 ? 'n' : ''} atención inmediata.
-                  </div>
-                  {solicitudesVencidas.length <= 3 && (
-                    <div className="text-sm">
-                      {solicitudesVencidas.map(s => s.id).join(', ')}
-                    </div>
-                  )}
-                </div>
-              </AlertDescription>
-            </Alert>
-          </div>
+          <Alert className="border-red-200 bg-red-50">
+            <AlertTriangle className="h-4 w-4 text-red-600" />
+            <AlertDescription className="text-red-800 text-sm">
+              <span className="font-semibold">
+                ¡Atención! Tienes {solicitudesVencidas.length} solicitud{solicitudesVencidas.length > 1 ? 'es' : ''} vencida{solicitudesVencidas.length > 1 ? 's' : ''}
+              </span>
+              {solicitudesVencidas.length <= 3 && (
+                <span className="ml-2">({solicitudesVencidas.map(s => s.id).join(', ')})</span>
+              )}
+            </AlertDescription>
+          </Alert>
         )}
 
-        {/* Controles de búsqueda y vista centrados */}
-        <div className="max-w-5xl mx-auto">
-          <div className="flex flex-col lg:flex-row gap-6">
-            <Card className="bg-white/90 backdrop-blur-sm border border-slate-200/60 shadow-lg flex-1">
-              <div className="p-4">
-                <div className="relative">
-                  <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
-                  <Input
-                    placeholder="Buscar por título, ID o tipo..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-12 h-12 bg-white border-slate-300 text-slate-800 placeholder:text-slate-500 focus:border-blue-400 focus:ring-blue-400/20 text-base"
-                  />
-                </div>
-              </div>
-            </Card>
-            
-            <Card className="bg-white/90 backdrop-blur-sm border border-slate-200/60 shadow-lg">
-              <div className="p-4">
-                <div className="flex gap-3">
-                  <Button
-                    variant={viewMode === "grid" ? "default" : "outline"}
-                    size="default"
-                    onClick={() => setViewMode("grid")}
-                    className={viewMode === "grid" 
-                      ? "bg-blue-600 text-white hover:bg-blue-700 shadow-md" 
-                      : "bg-white border-slate-300 text-slate-700 hover:bg-blue-50 hover:border-blue-300"
-                    }
-                  >
-                    <Grid2x2 className="w-4 h-4 mr-2" />
-                    Grilla
-                  </Button>
-                  <Button
-                    variant={viewMode === "cards" ? "default" : "outline"}
-                    size="default"
-                    onClick={() => setViewMode("cards")}
-                    className={viewMode === "cards" 
-                      ? "bg-blue-600 text-white hover:bg-blue-700 shadow-md" 
-                      : "bg-white border-slate-300 text-slate-700 hover:bg-blue-50 hover:border-blue-300"
-                    }
-                  >
-                    <LayoutGrid className="w-4 h-4 mr-2" />
-                    Tarjetas
-                  </Button>
-                </div>
-              </div>
-            </Card>
+        {/* Controles de búsqueda y vista */}
+        <div className="flex flex-col sm:flex-row gap-4">
+          <div className="flex-1 relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
+            <Input
+              placeholder="Buscar por título, ID o tipo..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10 h-10 border-slate-300"
+            />
+          </div>
+          
+          <div className="flex gap-2">
+            <Button
+              variant={viewMode === "grid" ? "default" : "outline"}
+              size="sm"
+              onClick={() => setViewMode("grid")}
+            >
+              <Grid2x2 className="w-4 h-4 mr-1" />
+              Grilla
+            </Button>
+            <Button
+              variant={viewMode === "cards" ? "default" : "outline"}
+              size="sm"
+              onClick={() => setViewMode("cards")}
+            >
+              <LayoutGrid className="w-4 h-4 mr-1" />
+              Tarjetas
+            </Button>
           </div>
         </div>
 
-        {/* Vista de solicitudes centrada */}
-        <div className="max-w-6xl mx-auto">
+        {/* Vista de solicitudes */}
+        <div className="w-full">
           {viewMode === "grid" ? renderGridView() : renderCardsView()}
         </div>
 
-        {/* Paginación centrada */}
+        {/* Paginación sutil */}
         {totalPages > 1 && (
-          <div className="flex justify-center">
-            <Card className="bg-white/90 backdrop-blur-sm border border-slate-200/60 shadow-lg">
-              <div className="p-4">
-                <Pagination>
-                  <PaginationContent>
-                    <PaginationItem>
-                      <PaginationPrevious 
-                        onClick={() => currentPage > 1 && handlePageChange(currentPage - 1)}
-                        className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer hover:bg-blue-50 hover:text-blue-700"}
-                      />
-                    </PaginationItem>
-                    
-                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                      <PaginationItem key={page}>
-                        <PaginationLink
-                          onClick={() => handlePageChange(page)}
-                          isActive={currentPage === page}
-                          className="cursor-pointer hover:bg-blue-50 hover:text-blue-700"
-                        >
-                          {page}
-                        </PaginationLink>
-                      </PaginationItem>
-                    ))}
-                    
-                    <PaginationItem>
-                      <PaginationNext 
-                        onClick={() => currentPage < totalPages && handlePageChange(currentPage + 1)}
-                        className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer hover:bg-blue-50 hover:text-blue-700"}
-                      />
-                    </PaginationItem>
-                  </PaginationContent>
-                </Pagination>
-              </div>
-            </Card>
+          <div className="flex justify-center pt-4">
+            <Pagination>
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious 
+                    onClick={() => currentPage > 1 && handlePageChange(currentPage - 1)}
+                    className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                  />
+                </PaginationItem>
+                
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                  <PaginationItem key={page}>
+                    <PaginationLink
+                      onClick={() => handlePageChange(page)}
+                      isActive={currentPage === page}
+                      className="cursor-pointer"
+                    >
+                      {page}
+                    </PaginationLink>
+                  </PaginationItem>
+                ))}
+                
+                <PaginationItem>
+                  <PaginationNext 
+                    onClick={() => currentPage < totalPages && handlePageChange(currentPage + 1)}
+                    className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
           </div>
         )}
-
-        {/* Estadísticas centradas */}
-        <div className="max-w-5xl mx-auto">
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-            {[
-              { label: "Total", value: solicitudes.length, color: "text-blue-600", bgColor: "bg-blue-50" },
-              { label: "Completadas", value: solicitudes.filter(s => s.estado === "Completado").length, color: "text-green-600", bgColor: "bg-green-50" },
-              { label: "En progreso", value: solicitudes.filter(s => s.estado === "En progreso").length, color: "text-yellow-600", bgColor: "bg-yellow-50" },
-              { label: "Pendientes", value: solicitudes.filter(s => s.estado === "Pendiente").length, color: "text-orange-600", bgColor: "bg-orange-50" },
-              { label: "Vencidas", value: solicitudesVencidas.length, color: "text-red-600", bgColor: "bg-red-50" },
-            ].map((stat) => (
-              <Card key={stat.label} className={`bg-white/90 backdrop-blur-sm border border-slate-200/60 shadow-lg hover:shadow-xl transition-all duration-300 ${
-                stat.label === "Vencidas" && stat.value > 0 ? 'ring-2 ring-red-400/50 border-red-300' : 'hover:border-blue-300/50'
-              }`}>
-                <div className="p-6 text-center">
-                  <div className={`w-12 h-12 rounded-full ${stat.bgColor} flex items-center justify-center mx-auto mb-3`}>
-                    <span className={`text-xl font-bold ${stat.color}`}>{stat.value}</span>
-                  </div>
-                  <p className="text-sm font-medium text-slate-700">{stat.label}</p>
-                </div>
-              </Card>
-            ))}
-          </div>
-        </div>
       </div>
     </div>
   );
