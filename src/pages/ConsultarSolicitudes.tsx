@@ -95,8 +95,8 @@ export default function ConsultarSolicitudes() {
   const [solicitudes] = useState(solicitudesEjemplo);
   const [viewMode, setViewMode] = useState<"grid" | "cards">("grid");
   const [currentPage, setCurrentPage] = useState(1);
-  const [selectedEps, setSelectedEps] = useState("");
-  const [selectedEstado, setSelectedEstado] = useState("");
+  const [selectedEps, setSelectedEps] = useState("all");
+  const [selectedEstado, setSelectedEstado] = useState("all");
   const itemsPerPage = 4;
 
   // Obtener valores únicos para los filtros
@@ -175,8 +175,8 @@ export default function ConsultarSolicitudes() {
       solicitud.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
       solicitud.tipo.toLowerCase().includes(searchTerm.toLowerCase());
     
-    const matchesEps = selectedEps === "" || solicitud.eps === selectedEps;
-    const matchesEstado = selectedEstado === "" || solicitud.estado === selectedEstado;
+    const matchesEps = selectedEps === "all" || solicitud.eps === selectedEps;
+    const matchesEstado = selectedEstado === "all" || solicitud.estado === selectedEstado;
     
     return matchesSearch && matchesEps && matchesEstado;
   });
@@ -493,8 +493,8 @@ export default function ConsultarSolicitudes() {
                 <SelectTrigger className="w-full sm:w-[180px] h-9">
                   <SelectValue placeholder="Todas las EPS" />
                 </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="">Todas las EPS</SelectItem>
+                <SelectContent className="bg-white border border-slate-200 shadow-lg z-50">
+                  <SelectItem value="all">Todas las EPS</SelectItem>
                   {epsOptions.map((eps) => (
                     <SelectItem key={eps} value={eps}>
                       {eps}
@@ -507,8 +507,8 @@ export default function ConsultarSolicitudes() {
                 <SelectTrigger className="w-full sm:w-[160px] h-9">
                   <SelectValue placeholder="Todos los estados" />
                 </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="">Todos los estados</SelectItem>
+                <SelectContent className="bg-white border border-slate-200 shadow-lg z-50">
+                  <SelectItem value="all">Todos los estados</SelectItem>
                   {estadoOptions.map((estado) => (
                     <SelectItem key={estado} value={estado}>
                       {estado}
