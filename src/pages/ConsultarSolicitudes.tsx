@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { 
   Pagination, 
   PaginationContent, 
@@ -21,7 +22,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Search, Clock, CheckCircle, AlertCircle, XCircle, Eye, LayoutGrid, Grid2x2, AlertTriangle } from "lucide-react";
+import { Search, Clock, CheckCircle, AlertCircle, XCircle, Eye, LayoutGrid, Grid2x2, AlertTriangle, Download, Filter } from "lucide-react";
 import { formatDistanceToNow, differenceInDays, parseISO } from "date-fns";
 import { es } from "date-fns/locale";
 
@@ -33,6 +34,7 @@ const solicitudesEjemplo = [
     tipo: "Workflow",
     estado: "En progreso",
     prioridad: "Alta",
+    eps: "EPS Sura",
     fechaCreacion: "2024-01-15",
     fechaActualizacion: "2024-01-20",
   },
@@ -42,6 +44,7 @@ const solicitudesEjemplo = [
     tipo: "Integración",
     estado: "Completado",
     prioridad: "Media",
+    eps: "Nueva EPS",
     fechaCreacion: "2024-01-10",
     fechaActualizacion: "2024-01-18",
   },
@@ -51,6 +54,7 @@ const solicitudesEjemplo = [
     tipo: "Reporte automático",
     estado: "Pendiente",
     prioridad: "Baja",
+    eps: "Compensar",
     fechaCreacion: "2023-12-01",
     fechaActualizacion: "2023-12-01",
   },
@@ -60,6 +64,7 @@ const solicitudesEjemplo = [
     tipo: "Sistema de notificaciones",
     estado: "Cancelado",
     prioridad: "Media",
+    eps: "EPS Sanitas",
     fechaCreacion: "2024-01-08",
     fechaActualizacion: "2024-01-12",
   },
@@ -69,6 +74,7 @@ const solicitudesEjemplo = [
     tipo: "Workflow",
     estado: "En progreso",
     prioridad: "Alta",
+    eps: "EPS Sura",
     fechaCreacion: "2023-11-15",
     fechaActualizacion: "2024-01-28",
   },
@@ -78,6 +84,7 @@ const solicitudesEjemplo = [
     tipo: "Reporte automático",
     estado: "Completado",
     prioridad: "Media",
+    eps: "Nueva EPS",
     fechaCreacion: "2024-01-20",
     fechaActualizacion: "2024-01-27",
   },
@@ -88,7 +95,13 @@ export default function ConsultarSolicitudes() {
   const [solicitudes] = useState(solicitudesEjemplo);
   const [viewMode, setViewMode] = useState<"grid" | "cards">("grid");
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectedEps, setSelectedEps] = useState("");
+  const [selectedEstado, setSelectedEstado] = useState("");
   const itemsPerPage = 4;
+
+  // Obtener valores únicos para los filtros
+  const epsOptions = Array.from(new Set(solicitudes.map(s => s.eps))).sort();
+  const estadoOptions = Array.from(new Set(solicitudes.map(s => s.estado))).sort();
 
   // Función para calcular el tiempo transcurrido
   const getTimeElapsed = (fechaCreacion: string) => {
@@ -157,11 +170,16 @@ export default function ConsultarSolicitudes() {
     }
   };
 
-  const filteredSolicitudes = solicitudes.filter(solicitud =>
-    solicitud.titulo.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    solicitud.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    solicitud.tipo.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredSolicitudes = solicitudes.filter(solicitud => {
+    const matchesSearch = solicitud.titulo.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      solicitud.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      solicitud.tipo.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    const matchesEps = selectedEps === "" || solicitud.eps === selectedEps;
+    const matchesEstado = selectedEstado === "" || solicitud.estado === selectedEstado;
+    
+    return matchesSearch && matchesEps && matchesEstado;
+  });
 
   const solicitudesVencidas = filteredSolicitudes.filter(solicitud => 
     isOverdue(solicitud.fechaCreacion, solicitud.estado)
@@ -174,6 +192,38 @@ export default function ConsultarSolicitudes() {
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
+  };
+
+  const handleExportData = () => {
+    const csvContent = [
+      // Headers
+      ["ID", "Título", "EPS", "Estado", "Prioridad", "Tipo", "Fecha Creación", "Fecha Actualización"],
+      // Data rows
+      ...filteredSolicitudes.map(solicitud => [
+        solicitud.id,
+        solicitud.titulo,
+        solicitud.eps,
+        solicitud.estado,
+        solicitud.prioridad,
+        solicitud.tipo,
+        solicitud.fechaCreacion,
+        solicitud.fechaActualizacion
+      ])
+    ];
+    
+    const csvString = csvContent.map(row => 
+      row.map(cell => `"${cell}"`).join(",")
+    ).join("\n");
+    
+    const blob = new Blob([csvString], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(blob);
+    link.setAttribute("href", url);
+    link.setAttribute("download", `solicitudes_${new Date().toISOString().split('T')[0]}.csv`);
+    link.style.visibility = "hidden";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   const renderCardsView = () => (
@@ -218,6 +268,9 @@ export default function ConsultarSolicitudes() {
                 <h3 className="text-lg font-semibold text-slate-800 leading-tight">{solicitud.titulo}</h3>
                 
                 <div className="flex flex-wrap gap-2">
+                  <Badge variant="outline" className="bg-purple-50 text-purple-700 border-purple-200 text-xs">
+                    {solicitud.eps}
+                  </Badge>
                   <Badge variant="outline" className={`${getStatusColor(solicitud.estado)} text-xs`}>
                     {solicitud.estado}
                   </Badge>
@@ -263,22 +316,23 @@ export default function ConsultarSolicitudes() {
   const renderGridView = () => (
     <div className="overflow-x-auto">
       <Table>
-        <TableHeader>
-          <TableRow className="hover:bg-transparent border-slate-200 bg-slate-50">
-            <TableHead className="text-slate-700 font-semibold py-3 text-sm">ID</TableHead>
-            <TableHead className="text-slate-700 font-semibold py-3 text-sm">Título</TableHead>
-            <TableHead className="text-slate-700 font-semibold py-3 text-sm">Estado</TableHead>
-            <TableHead className="text-slate-700 font-semibold py-3 text-sm">Prioridad</TableHead>
-            <TableHead className="text-slate-700 font-semibold py-3 text-sm">Tipo</TableHead>
-            <TableHead className="text-slate-700 font-semibold py-3 text-sm">Fecha</TableHead>
-            <TableHead className="text-slate-700 font-semibold py-3 text-sm">Tiempo</TableHead>
-            <TableHead className="text-slate-700 font-semibold py-3 text-sm">Acciones</TableHead>
-          </TableRow>
-        </TableHeader>
+          <TableHeader>
+            <TableRow className="hover:bg-transparent border-slate-200 bg-slate-50">
+              <TableHead className="text-slate-700 font-semibold py-3 text-sm">ID</TableHead>
+              <TableHead className="text-slate-700 font-semibold py-3 text-sm">Título</TableHead>
+              <TableHead className="text-slate-700 font-semibold py-3 text-sm">EPS</TableHead>
+              <TableHead className="text-slate-700 font-semibold py-3 text-sm">Estado</TableHead>
+              <TableHead className="text-slate-700 font-semibold py-3 text-sm">Prioridad</TableHead>
+              <TableHead className="text-slate-700 font-semibold py-3 text-sm">Tipo</TableHead>
+              <TableHead className="text-slate-700 font-semibold py-3 text-sm">Fecha</TableHead>
+              <TableHead className="text-slate-700 font-semibold py-3 text-sm">Tiempo</TableHead>
+              <TableHead className="text-slate-700 font-semibold py-3 text-sm">Acciones</TableHead>
+            </TableRow>
+          </TableHeader>
         <TableBody>
           {currentSolicitudes.length === 0 ? (
-            <TableRow>
-              <TableCell colSpan={8} className="py-12">
+                <TableRow>
+                  <TableCell colSpan={9} className="py-12">
                 <div className="flex flex-col items-center gap-3">
                   <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center">
                     <Search className="w-6 h-6 text-slate-400" />
@@ -308,19 +362,22 @@ export default function ConsultarSolicitudes() {
                     )}
                   </div>
                 </TableCell>
-                <TableCell className="font-medium text-slate-800 max-w-xs py-3">
-                  <div className="truncate text-sm" title={solicitud.titulo}>
-                    {solicitud.titulo}
-                  </div>
-                </TableCell>
-                <TableCell className="py-3">
-                  <div className="flex items-center gap-2">
-                    {getStatusIcon(solicitud.estado)}
-                    <Badge variant="outline" className={`${getStatusColor(solicitud.estado)} text-xs`}>
-                      {solicitud.estado}
-                    </Badge>
-                  </div>
-                </TableCell>
+                  <TableCell className="font-medium text-slate-800 max-w-xs py-3">
+                    <div className="truncate text-sm" title={solicitud.titulo}>
+                      {solicitud.titulo}
+                    </div>
+                  </TableCell>
+                  <TableCell className="py-3">
+                    <span className="text-sm text-slate-700">{solicitud.eps}</span>
+                  </TableCell>
+                  <TableCell className="py-3">
+                    <div className="flex items-center gap-2">
+                      {getStatusIcon(solicitud.estado)}
+                      <Badge variant="outline" className={`${getStatusColor(solicitud.estado)} text-xs`}>
+                        {solicitud.estado}
+                      </Badge>
+                    </div>
+                  </TableCell>
                 <TableCell className="py-3">
                   <Badge variant="outline" className={`${getPriorityColor(solicitud.prioridad)} text-xs`}>
                     {solicitud.prioridad}
@@ -399,35 +456,86 @@ export default function ConsultarSolicitudes() {
           </Alert>
         )}
 
-        {/* Controles de búsqueda y vista */}
-        <div className="flex flex-col sm:flex-row gap-4">
-          <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
-            <Input
-              placeholder="Buscar por título, ID o tipo..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 h-10 border-slate-300"
-            />
+        {/* Controles de búsqueda, filtros y vista */}
+        <div className="space-y-4">
+          {/* Barra de búsqueda y exportar */}
+          <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex-1 relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
+              <Input
+                placeholder="Buscar por título, ID o tipo..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10 h-10 border-slate-300"
+              />
+            </div>
+            
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleExportData}
+              className="shrink-0"
+            >
+              <Download className="w-4 h-4 mr-1" />
+              Exportar
+            </Button>
           </div>
-          
-          <div className="flex gap-2">
-            <Button
-              variant={viewMode === "grid" ? "default" : "outline"}
-              size="sm"
-              onClick={() => setViewMode("grid")}
-            >
-              <Grid2x2 className="w-4 h-4 mr-1" />
-              Grilla
-            </Button>
-            <Button
-              variant={viewMode === "cards" ? "default" : "outline"}
-              size="sm"
-              onClick={() => setViewMode("cards")}
-            >
-              <LayoutGrid className="w-4 h-4 mr-1" />
-              Tarjetas
-            </Button>
+
+          {/* Filtros y vista */}
+          <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex flex-col sm:flex-row gap-3 flex-1">
+              <div className="flex items-center gap-2">
+                <Filter className="w-4 h-4 text-slate-500" />
+                <span className="text-sm font-medium text-slate-700">Filtros:</span>
+              </div>
+              
+              <Select value={selectedEps} onValueChange={setSelectedEps}>
+                <SelectTrigger className="w-full sm:w-[180px] h-9">
+                  <SelectValue placeholder="Todas las EPS" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="">Todas las EPS</SelectItem>
+                  {epsOptions.map((eps) => (
+                    <SelectItem key={eps} value={eps}>
+                      {eps}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              <Select value={selectedEstado} onValueChange={setSelectedEstado}>
+                <SelectTrigger className="w-full sm:w-[160px] h-9">
+                  <SelectValue placeholder="Todos los estados" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="">Todos los estados</SelectItem>
+                  {estadoOptions.map((estado) => (
+                    <SelectItem key={estado} value={estado}>
+                      {estado}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            
+            <div className="flex gap-2">
+              <Button
+                variant={viewMode === "grid" ? "default" : "outline"}
+                size="sm"
+                onClick={() => setViewMode("grid")}
+              >
+                <Grid2x2 className="w-4 h-4 mr-1" />
+                Grilla
+              </Button>
+              <Button
+                variant={viewMode === "cards" ? "default" : "outline"}
+                size="sm"
+                onClick={() => setViewMode("cards")}
+              >
+                <LayoutGrid className="w-4 h-4 mr-1" />
+                Tarjetas
+              </Button>
+            </div>
           </div>
         </div>
 
