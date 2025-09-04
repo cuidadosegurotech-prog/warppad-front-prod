@@ -456,7 +456,7 @@ export default function ConsultarSolicitudes() {
         </div>
 
         {/* Estadísticas compactas */}
-        <div className="grid grid-cols-5 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
           {[
             { label: "Total", value: solicitudes.length, color: "text-blue-600" },
             { label: "Completadas", value: solicitudes.filter(s => s.estado === "Completado").length, color: "text-green-600" },
@@ -464,12 +464,12 @@ export default function ConsultarSolicitudes() {
             { label: "Pendientes", value: solicitudes.filter(s => s.estado === "Pendiente").length, color: "text-orange-600" },
             { label: "Vencidas", value: solicitudesVencidas.length, color: "text-red-600" },
           ].map((stat) => (
-            <div key={stat.label} className="p-3 text-center">
+            <Card key={stat.label} className="p-4 text-center bg-white border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
               <div className={`text-2xl font-bold ${stat.color} mb-1`}>
                 {stat.value}
               </div>
-              <p className="text-xs font-medium text-slate-600">{stat.label}</p>
-            </div>
+              <p className="text-sm font-medium text-slate-600">{stat.label}</p>
+            </Card>
           ))}
         </div>
 
@@ -616,10 +616,10 @@ export default function ConsultarSolicitudes() {
       <Dialog open={feedbackOpen} onOpenChange={setFeedbackOpen}>
         <DialogTrigger asChild>
           <Button 
-            className="fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-lg hover:shadow-xl bg-blue-600 hover:bg-blue-700 text-white z-50 transition-all duration-200"
+            className="fixed bottom-6 right-6 h-16 w-16 rounded-full shadow-xl hover:shadow-2xl bg-blue-600 hover:bg-blue-700 text-white transition-all duration-300 hover:scale-105 z-[100]"
             size="icon"
           >
-            <MessageCircle className="w-6 h-6" />
+            <MessageCircle className="w-7 h-7" />
           </Button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-md">
