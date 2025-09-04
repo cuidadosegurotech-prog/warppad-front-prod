@@ -447,8 +447,8 @@ export default function ConsultarSolicitudes() {
   );
 
   return (
-    <div className="container mx-auto px-4 py-6 max-w-7xl">
-      <div className="space-y-6">
+    <div className="min-h-screen bg-background">
+      <div className="container mx-auto px-4 py-6 max-w-7xl space-y-6">
         {/* Header */}
         <div className="text-center space-y-3">
           <h1 className="text-3xl lg:text-4xl font-bold text-slate-900">
@@ -468,12 +468,12 @@ export default function ConsultarSolicitudes() {
             { label: "Pendientes", value: solicitudes.filter(s => s.estado === "Pendiente").length, color: "text-orange-600" },
             { label: "Vencidas", value: solicitudesVencidas.length, color: "text-red-600" },
           ].map((stat) => (
-            <div key={stat.label} className="p-4 text-center">
+            <Card key={stat.label} className="p-4 text-center">
               <div className={`text-2xl font-bold ${stat.color} mb-1`}>
                 {stat.value}
               </div>
               <p className="text-sm font-medium text-slate-600">{stat.label}</p>
-            </div>
+            </Card>
           ))}
         </div>
 
