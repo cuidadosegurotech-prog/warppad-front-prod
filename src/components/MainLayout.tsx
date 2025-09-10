@@ -1,6 +1,7 @@
 
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "./AppSidebar";
+import { FeedbackButton } from "./FeedbackButton";
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -31,6 +32,9 @@ export function MainLayout({ children }: MainLayoutProps) {
             </div>
           </main>
         </div>
+
+        {/* Botón de Feedback Flotante - Global para todas las páginas */}
+        <FeedbackButton />
       </div>
     </SidebarProvider>
   );
