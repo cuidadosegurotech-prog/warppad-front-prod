@@ -41,6 +41,10 @@ const solicitudesEjemplo = [
     eps: "EPS Sura",
     fechaCreacion: "2024-01-15",
     fechaActualizacion: "2024-01-20",
+    responsable: "Juan Pérez",
+    departamento: "Tecnología",
+    presupuesto: "$25,000",
+    observaciones: "En desarrollo de la fase inicial"
   },
   {
     id: "REQ-002",
@@ -51,6 +55,10 @@ const solicitudesEjemplo = [
     eps: "Nueva EPS",
     fechaCreacion: "2024-01-10",
     fechaActualizacion: "2024-01-18",
+    responsable: "María García",
+    departamento: "Sistemas",
+    presupuesto: "$15,000",
+    observaciones: "Integración exitosa completada"
   },
   {
     id: "REQ-003", 
@@ -61,6 +69,10 @@ const solicitudesEjemplo = [
     eps: "Compensar",
     fechaCreacion: "2023-12-01",
     fechaActualizacion: "2023-12-01",
+    responsable: "Carlos López",
+    departamento: "Ventas",
+    presupuesto: "$8,500",
+    observaciones: "Pendiente de aprobación del área comercial"
   },
   {
     id: "REQ-004",
@@ -71,6 +83,10 @@ const solicitudesEjemplo = [
     eps: "EPS Sanitas",
     fechaCreacion: "2024-01-08",
     fechaActualizacion: "2024-01-12",
+    responsable: "Ana Rodríguez",
+    departamento: "Marketing",
+    presupuesto: "$12,000",
+    observaciones: "Cancelado por cambio en prioridades"
   },
   {
     id: "REQ-005",
@@ -81,6 +97,10 @@ const solicitudesEjemplo = [
     eps: "EPS Sura",
     fechaCreacion: "2023-11-15",
     fechaActualizacion: "2024-01-28",
+    responsable: "Luis Martínez",
+    departamento: "Comunicaciones",
+    presupuesto: "$18,700",
+    observaciones: "Implementando plantillas personalizadas"
   },
   {
     id: "REQ-006",
@@ -91,6 +111,10 @@ const solicitudesEjemplo = [
     eps: "Nueva EPS",
     fechaCreacion: "2024-01-20",
     fechaActualizacion: "2024-01-27",
+    responsable: "Sofia Hernández",
+    departamento: "Analítica",
+    presupuesto: "$22,300",
+    observaciones: "Dashboard operativo con todas las métricas"
   },
 ];
 
@@ -360,13 +384,17 @@ export default function ConsultarSolicitudes() {
                 <TableHead className="text-slate-700 font-semibold py-3 text-sm">Tipo</TableHead>
                 <TableHead className="text-slate-700 font-semibold py-3 text-sm">Fecha</TableHead>
                 <TableHead className="text-slate-700 font-semibold py-3 text-sm">Tiempo</TableHead>
+                <TableHead className="text-slate-700 font-semibold py-3 text-sm">Responsable</TableHead>
+                <TableHead className="text-slate-700 font-semibold py-3 text-sm">Departamento</TableHead>
+                <TableHead className="text-slate-700 font-semibold py-3 text-sm">Presupuesto</TableHead>
+                <TableHead className="text-slate-700 font-semibold py-3 text-sm">Observaciones</TableHead>
                 <TableHead className="text-slate-700 font-semibold py-3 text-sm">Acciones</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {currentSolicitudes.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={9} className="py-12">
+                  <TableCell colSpan={13} className="py-12">
                     <div className="flex flex-col items-center gap-3">
                       <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center">
                         <Search className="w-6 h-6 text-slate-400" />
@@ -429,6 +457,22 @@ export default function ConsultarSolicitudes() {
                       <span className="text-blue-600 font-semibold">
                         {getTimeElapsed(solicitud.fechaCreacion)}
                       </span>
+                    </TableCell>
+                    <TableCell className="text-slate-600 text-xs py-3">
+                      <span className="font-medium">{solicitud.responsable}</span>
+                    </TableCell>
+                    <TableCell className="text-slate-600 text-xs py-3">
+                      <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200 text-xs">
+                        {solicitud.departamento}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-slate-600 text-xs py-3">
+                      <span className="font-semibold text-green-700">{solicitud.presupuesto}</span>
+                    </TableCell>
+                    <TableCell className="text-slate-600 text-xs py-3 max-w-xs">
+                      <div className="truncate" title={solicitud.observaciones}>
+                        {solicitud.observaciones}
+                      </div>
                     </TableCell>
                     <TableCell className="py-3">
                       <Button variant="outline" size="sm">
