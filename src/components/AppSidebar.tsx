@@ -53,8 +53,8 @@ export function AppSidebar() {
   const location = useLocation();
 
   return (
-    <Sidebar className="border-r border-blue-400/30 bg-gradient-to-br from-blue-900 via-blue-800 to-indigo-900">
-      <SidebarHeader className="border-b border-blue-400/30 bg-gradient-to-r from-blue-800 to-indigo-800">
+    <Sidebar className="border-r border-blue-400/30 bg-gradient-to-br from-blue-900 via-blue-800 to-indigo-900 pt-14">
+      <SidebarHeader className="border-b border-blue-400/30 bg-gradient-to-r from-blue-800 to-indigo-800 mt-0">
         <div className="flex items-center gap-3 p-4">
           <div className="p-2 bg-gradient-to-r from-yellow-400 via-amber-400 to-yellow-500 rounded-xl shadow-lg">
             <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center overflow-hidden">
