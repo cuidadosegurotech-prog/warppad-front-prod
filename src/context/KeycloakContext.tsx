@@ -24,7 +24,7 @@ export const KeycloakProvider = ({ children }: { children: ReactNode }) => {
       realm: "WarpPAD",
       clientId: "warppad"
     });
-
+    //Correcion de redireccion hacia NuevaSolicitud
     keycloakInstance.init({
       onLoad: 'login-required',
       checkLoginIframe: false, // esto evita problemas con iframes
