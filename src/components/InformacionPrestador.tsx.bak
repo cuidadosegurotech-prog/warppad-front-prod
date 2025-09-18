@@ -2,7 +2,7 @@
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 interface Prestador {
   nombre: string;
@@ -154,16 +154,13 @@ export default function InformacionPrestador({
 }: InformacionPrestadorProps) {
   const [search, setSearch] = useState("");
   const [prestadoresRegional, setPrestadoresRegional] = useState([]);
-  useEffect(()=>{
-    if(regional){
-      console.log("Regional", regional);
-      onRegionalChange(regional);
-    }
-  }, [regional]);
+  console.log("InformacionPrestador - regional:", regional);
+  console.log("InformacionPrestador - prestador:", prestador);
 
   let prestadoresDisponibles = prestadoresPorRegional[regional] || [];
 
   const handleRegionalChange = (value: string) => {
+    console.log("Cambio de regional a:", value);
     onRegionalChange(value);
     prestadoresDisponibles = prestadoresPorRegional[value]
     setPrestadoresRegional(prestadoresDisponibles);
@@ -172,7 +169,7 @@ export default function InformacionPrestador({
   };
 
   const handlePrestadorChange = (value: string) => {
-    //setPrestadoresRegional(prestadoresPorRegional[regional]);
+    console.log("Cambio de prestador a:", value);
     onPrestadorChange(value);
   };
 
@@ -195,7 +192,7 @@ export default function InformacionPrestador({
           Solicitud asignada a la regional
           <span className="text-red-500"> *</span>
         </Label>
-        <Select value={regional} onValueChange={handleRegionalChange} disabled={true}>
+        <Select value={regional} onValueChange={handleRegionalChange} disabled={bBloquear}>
           <SelectTrigger className="bg-white border-slate-200 text-slate-800 focus:border-blue-400 focus:ring-blue-400/20">
             <SelectValue placeholder="Selecciona la regional" />
           </SelectTrigger>
@@ -265,7 +262,6 @@ export default function InformacionPrestador({
             onChange={(e) => handlePrestadorChange(e.target.value)}
             className="bg-white border-slate-200 text-slate-800 placeholder:text-slate-400 focus:border-blue-400 focus:ring-blue-400/20"
             required
-            disabled={bBloquear}
           />
         </div>
     </div>

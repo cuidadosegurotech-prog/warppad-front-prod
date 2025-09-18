@@ -1,6 +1,5 @@
-import * as XLSX from 'xlsx';
+
 import { useState, useEffect } from "react";
-import { saveAs } from 'file-saver';
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -33,7 +32,6 @@ import { es } from "date-fns/locale";
 import { useToast } from "@/hooks/use-toast";
 import { useKeycloak } from "@/context/KeycloakContext";
 import ModalDetalle from '@/components/SolicitudesDetalle';
-import ModalUpdate from '@/components/ModificarSolicitud';
 const API_URL = import.meta.env.VITE_CK_BACKEND_URL;
 
 
@@ -53,7 +51,7 @@ export default function ConsultarSolicitudes() {
     email: "",
     message: ""
   });
-  const itemsPerPage = 4;
+  const itemsPerPage = 6;
   const { token, authenticated, keycloak } = useKeycloak();
 
 
@@ -70,7 +68,7 @@ export default function ConsultarSolicitudes() {
   }, []);
   
   // Obtener valores únicos para los filtros
-  const epsOptions = Array.from(new Set(solicitudes.map(s => s.ClinicaPrestadora))).sort();
+  const epsOptions = Array.from(new Set(solicitudes.map(s => s.eps))).sort();
   const estadoOptions = Array.from(new Set(solicitudes.map(s => s.estado))).sort();
 
   // Función para calcular el tiempo transcurrido
@@ -190,7 +188,7 @@ export default function ConsultarSolicitudes() {
     solicitud.DatosPaciente.toLowerCase().includes(searchTerm.toLowerCase()) ||
     solicitud.ClinicaPrestadora.toLowerCase().includes(searchTerm.toLowerCase());
     
-    const matchesEps = selectedEps === "all" || solicitud.ClinicaPrestadora === selectedEps;
+    const matchesEps = selectedEps === "all" || solicitud.eps === selectedEps;
     const matchesEstado = selectedEstado === "all" || solicitud.estado === selectedEstado;
     
     return matchesSearch && matchesEps && matchesEstado;
@@ -279,7 +277,7 @@ export default function ConsultarSolicitudes() {
       ) : (
         currentSolicitudes.map((solicitud) => (
           <div 
-            key={solicitud.Id} 
+            key={solicitud.id} 
             className={`p-4 transition-colors ${
               isOverdue(solicitud.fechaCreacion, solicitud.estado) 
                 ? 'bg-red-50/30' 
@@ -291,7 +289,7 @@ export default function ConsultarSolicitudes() {
                 <div className="flex items-center gap-3">
                   {getStatusIcon(solicitud.estado)}
                   <span className="text-xs font-mono text-slate-600 bg-slate-50 px-2 py-1 rounded">
-                    {solicitud.Id}
+                    {solicitud.id}
                   </span>
                   {isOverdue(solicitud.fechaCreacion, solicitud.estado) && (
                     <div className="flex items-center gap-1 text-red-600 bg-red-50 px-2 py-1 rounded">
@@ -305,7 +303,7 @@ export default function ConsultarSolicitudes() {
                 
                 <div className="flex flex-wrap gap-2">
                   <Badge variant="outline" className="bg-purple-50 text-purple-700 border-purple-200 text-xs">
-                    {solicitud.ClinicaPrestadora}
+                    {solicitud.eps}
                   </Badge>
                   <Badge variant="outline" className={`${getStatusColor(solicitud.estado)} text-xs`}>
                     {solicitud.estado}
@@ -330,15 +328,17 @@ export default function ConsultarSolicitudes() {
                   <div>
                     <span className="text-slate-500 font-medium text-xs">Tiempo transcurrido</span>
                     <div className="text-blue-600 font-semibold">
-                      {getTimeElapsed(solicitud.fechaCreacion,solicitud.fechaActualizacion)}
+                      {getTimeElapsed(solicitud.fechaCreacion)}
                     </div>
                   </div>
                 </div>
               </div>
               
               <div className="flex lg:flex-col gap-2">
-                <ModalDetalle key={solicitud.Id} ObjDatosSolicitud={solicitud}></ModalDetalle>
-                <ModalUpdate key={solicitud.Id} ObjDatosSolicitud={solicitud}></ModalUpdate>
+                <Button variant="outline" size="sm">
+                  <Eye className="w-3 h-3 mr-1" />
+                  Ver detalles
+                </Button>
               </div>
             </div>
           </div>
@@ -356,16 +356,15 @@ export default function ConsultarSolicitudes() {
               <TableRow className="hover:bg-transparent border-slate-200 bg-slate-50">
                 <TableHead className="text-slate-700 font-semibold py-3 text-sm">ID</TableHead>
                 <TableHead className="text-slate-700 font-semibold py-3 text-sm">Título</TableHead>
-                <TableHead className="text-slate-700 font-semibold py-3 text-sm">Paciente</TableHead>
-                <TableHead className="text-slate-700 font-semibold py-3 text-sm">Regional</TableHead>
                 <TableHead className="text-slate-700 font-semibold py-3 text-sm">EPS</TableHead>
                 <TableHead className="text-slate-700 font-semibold py-3 text-sm">Estado</TableHead>
                 <TableHead className="text-slate-700 font-semibold py-3 text-sm">Prioridad</TableHead>
                 <TableHead className="text-slate-700 font-semibold py-3 text-sm">Tipo</TableHead>
-                <TableHead className="text-slate-700 font-semibold py-3 text-sm">Fecha Solicitud</TableHead>
-                <TableHead className="text-slate-700 font-semibold py-3 text-sm">Fecha Respuesta</TableHead>
+                <TableHead className="text-slate-700 font-semibold py-3 text-sm">Fecha</TableHead>
+                <TableHead className="text-slate-700 font-semibold py-3 text-sm">Tiempo</TableHead>
                 <TableHead className="text-slate-700 font-semibold py-3 text-sm">Responsable</TableHead>
                 <TableHead className="text-slate-700 font-semibold py-3 text-sm">Departamento</TableHead>
+                <TableHead className="text-slate-700 font-semibold py-3 text-sm">Presupuesto</TableHead>
                 <TableHead className="text-slate-700 font-semibold py-3 text-sm">Observaciones</TableHead>
                 <TableHead className="text-slate-700 font-semibold py-3 text-sm">Acciones</TableHead>
               </TableRow>
@@ -388,7 +387,7 @@ export default function ConsultarSolicitudes() {
               ) : (
                 currentSolicitudes.map((solicitud) => (
                   <TableRow 
-                    key={solicitud.Id} 
+                    key={solicitud.id} 
                     className={`hover:bg-slate-50 border-slate-200 transition-colors ${
                       isOverdue(solicitud.fechaCreacion, solicitud.estado) 
                         ? 'bg-red-50/50 hover:bg-red-50' 
@@ -397,29 +396,19 @@ export default function ConsultarSolicitudes() {
                   >
                     <TableCell className="font-mono text-slate-600 py-3">
                       <div className="flex items-center gap-2">
-                        <span className="bg-slate-50 px-2 py-1 rounded text-xs">{solicitud.Id}</span>
+                        <span className="bg-slate-50 px-2 py-1 rounded text-xs">{solicitud.id}</span>
                         {isOverdue(solicitud.fechaCreacion, solicitud.estado) && (
                           <AlertTriangle className="w-3 h-3 text-red-600" />
                         )}
                       </div>
                     </TableCell>
-                     <TableCell className="font-medium text-slate-800 max-w-xs py-3">
+                    <TableCell className="font-medium text-slate-800 max-w-xs py-3">
                       <div className="truncate text-sm" title={solicitud.titulo}>
                         {solicitud.titulo}
                       </div>
                     </TableCell>
-                    <TableCell className="font-medium text-slate-800 max-w-xs py-3">
-                      <div className="truncate text-sm" title={solicitud.DatosPaciente}>
-                        {solicitud.DatosPaciente}
-                      </div>
-                    </TableCell>
-                     <TableCell className="font-medium text-slate-800 max-w-xs py-3">
-                      <div className="truncate text-sm" title={solicitud.Regional}>
-                        {solicitud.Regional}
-                      </div>
-                    </TableCell>
                     <TableCell className="py-3">
-                      <span className="text-sm text-slate-700">{solicitud.ClinicaPrestadora}</span>
+                      <span className="text-sm text-slate-700">{solicitud.eps}</span>
                     </TableCell>
                     <TableCell className="py-3">
                       <div className="flex items-center gap-2">
@@ -444,7 +433,7 @@ export default function ConsultarSolicitudes() {
                     </TableCell>
                     <TableCell className="text-slate-600 text-xs py-3">
                       <span className="text-blue-600 font-semibold">
-                        {solicitud.fechaActualizacion}
+                        {getTimeElapsed(solicitud.fechaCreacion)}
                       </span>
                     </TableCell>
                     <TableCell className="text-slate-600 text-xs py-3">
@@ -454,6 +443,9 @@ export default function ConsultarSolicitudes() {
                       <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200 text-xs">
                         {solicitud.departamento}
                       </Badge>
+                    </TableCell>
+                    <TableCell className="text-slate-600 text-xs py-3">
+                      <span className="font-semibold text-green-700">{solicitud.presupuesto}</span>
                     </TableCell>
                     <TableCell className="text-slate-600 text-xs py-3 max-w-xs">
                       <div className="truncate" title={solicitud.observaciones}>
@@ -466,7 +458,6 @@ export default function ConsultarSolicitudes() {
                         Ver
                       </Button> */}
                       <ModalDetalle key={solicitud.Id} ObjDatosSolicitud={solicitud}></ModalDetalle>
-                      <ModalUpdate key={solicitud.Id} ObjDatosSolicitud={solicitud}></ModalUpdate>
                     </TableCell>
                   </TableRow>
                 ))
@@ -495,8 +486,8 @@ export default function ConsultarSolicitudes() {
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
           {[
             { label: "Total", value: solicitudes.length, color: "text-blue-600" },
-            { label: "Completadas", value: solicitudes.filter(s => s.estado === "Completada").length, color: "text-green-600" },
-            { label: "En progreso", value: solicitudes.filter(s => s.estado === "Proceso").length, color: "text-yellow-600" },
+            { label: "Completadas", value: solicitudes.filter(s => s.estado === "Completado").length, color: "text-green-600" },
+            { label: "En progreso", value: solicitudes.filter(s => s.estado === "En progreso").length, color: "text-yellow-600" },
             { label: "Pendientes", value: solicitudes.filter(s => s.estado === "Pendiente").length, color: "text-orange-600" },
             { label: "Vencidas", value: solicitudesVencidas.length, color: "text-red-600" },
           ].map((stat) => (

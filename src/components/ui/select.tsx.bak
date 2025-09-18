@@ -67,12 +67,8 @@ SelectScrollDownButton.displayName =
 
 const SelectContent = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Content>,
-  React.ComponentPropsWithoutRef<typeof SelectPrimitive.Content> & {
-    enableSearch?: boolean;
-    onSearchChange?: (value: string) => void;
-    searchValue?: string;
-  }
->(({ className, children, position = "popper", enableSearch, onSearchChange, searchValue, ...props }, ref) => (
+  React.ComponentPropsWithoutRef<typeof SelectPrimitive.Content>
+>(({ className, children, position = "popper", ...props }, ref) => (
   <SelectPrimitive.Portal>
     <SelectPrimitive.Content
       ref={ref}
@@ -85,17 +81,6 @@ const SelectContent = React.forwardRef<
       position={position}
       {...props}
     >
-      {/* Buscador */}
-      {enableSearch && (
-        <div className="p-2">
-          <input
-            className="w-full rounded-md border px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-ring"
-            placeholder="Buscar..."
-            value={searchValue}
-            onChange={(e) => onSearchChange?.(e.target.value)}
-          />
-        </div>
-      )}
       <SelectScrollUpButton />
       <SelectPrimitive.Viewport
         className={cn(
