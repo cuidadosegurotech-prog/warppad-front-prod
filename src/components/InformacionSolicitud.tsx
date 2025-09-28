@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -6,15 +5,16 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Upload, X, FileText, Search } from "lucide-react";
+import { Upload, X, FileText } from "lucide-react";
 import ServiciosSelector from "./ServiciosSelector";
 
 interface ArchivoSubido {
   id: string;
-  file: File,
+  file?: File;              // NUEVO: opcional para modo visualización
   nombre: string;
-  tamaño: number;
-  tipo: string;
+  tamaño?: number;          // NUEVO: opcional para modo visualización
+  tipo?: string;
+  url?: string;             // NUEVO: para URL de S3
 }
 
 interface InformacionSolicitudProps {
@@ -25,6 +25,7 @@ interface InformacionSolicitudProps {
   onArchivosChange?: (archivos: ArchivoSubido[]) => void;
   onServiciosChange?: (servicios: string[]) => void;
   bBloqueado?: boolean;
+  modoVisualizacion?: boolean; // NUEVO: determina si es solo lectura
 }
 
 const tiposSolicitud = [
@@ -35,73 +36,62 @@ const tiposSolicitud = [
 ];
 
 const tiposArchivosPermitidos = [
-  '.doc', '.docx', // Word
-  '.xls', '.xlsx', // Excel
-  '.ppt', '.pptx', // PowerPoint
-  '.pdf', // PDF
-  '.jpg', '.jpeg', '.png', '.gif', '.bmp', // Imágenes
-  '.mp4', '.avi', '.mov', '.wmv', // Video
-  '.mp3', '.wav', '.wma', '.aac' // Audio
+  ".doc", ".docx", ".xls", ".xlsx", ".ppt", ".pptx",
+  ".pdf", ".jpg", ".jpeg", ".png", ".gif", ".bmp",
+  ".mp4", ".avi", ".mov", ".wmv", ".mp3", ".wav", ".wma", ".aac"
 ];
 
 export default function InformacionSolicitud({
   tipoSolicitud,
-  archivos,
+  archivos = [],
   serviciosSeleccionados,
   onTipoSolicitudChange,
   onArchivosChange,
   onServiciosChange,
-  bBloqueado
+  bBloqueado,
+  modoVisualizacion = false // NUEVO: por defecto false
 }: InformacionSolicitudProps) {
 
-  // useEffect(()=>{
-  //   if(serviciosSeleccionados){
-  //     onServiciosChange(serviciosSeleccionados);
-  //   }else{
-  //     onServiciosChange([]);
-  //   }
-  // }, [serviciosSeleccionados]);
+  useEffect(() => {
+    if (archivos) {
+      console.log("Archivos que llegaron", archivos);
+      onArchivosChange(archivos);
+    } else {
+      onArchivosChange([]);
+    }
+  }, [archivos]);
 
   const [errorArchivo, setErrorArchivo] = useState<string>("");
 
   const formatearTamaño = (bytes: number): string => {
-    if (bytes === 0) return '0 Bytes';
+    if (!bytes) return "";
     const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const sizes = ["Bytes", "KB", "MB", "GB"];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
   };
-
 
   const limpiarNombreArchivo = (nombre: string): string => {
     return nombre
-      .normalize("NFD")                             // Descompone caracteres con tildes
-      .replace(/[\u0300-\u036f]/g, "")              // Elimina tildes y acentos
-      .replace(/[^\w.-]/g, "_")                     // Sustituye todo lo que no sea letras, números, _, . o - por _
-      .replace(/_+/g, "_")                          // Reemplaza múltiples guiones bajos seguidos por uno solo
-      .replace(/\.+/g, ".")                         // Reemplaza múltiples puntos seguidos por uno solo
-      .replace(/^[_\.]+|[_\.]+$/g, "")              // Elimina _ o . al inicio/final
-      .substring(0, 100)                            // Corta si es demasiado largo (100 caracteres)
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^\w.-]/g, "_")
+      .replace(/_+/g, "_")
+      .replace(/\.+/g, ".")
+      .replace(/^[_\.]+|[_\.]+$/g, "")
+      .substring(0, 100)
       .trim();
   };
 
   const contieneCaracteresEspeciales = (nombre: string): boolean => {
-    // Solo permite letras, números, guiones, guiones bajos y punto.
     return /[^a-zA-Z0-9._-]/.test(nombre.normalize("NFD").replace(/[\u0300-\u036f]/g, ""));
   };
 
   const validarArchivo = (archivo: File): string | null => {
-    // Validar tamaño (10MB máximo)
-    const tamañoMaximo = 10 * 1024 * 1024; // 10MB en bytes
-    if (archivo.size > tamañoMaximo) {
-      return "El archivo excede el tamaño máximo de 10MB";
-    }
-    // Validar tipo de archivo
-    const extension = '.' + archivo.name.split('.').pop()?.toLowerCase();
-    if (!tiposArchivosPermitidos.includes(extension || '')) {
-      return "Tipo de archivo no permitido";
-    }
-
+    const tamañoMaximo = 10 * 1024 * 1024; // 10MB
+    if (archivo.size > tamañoMaximo) return "El archivo excede el tamaño máximo de 10MB";
+    const extension = "." + archivo.name.split(".").pop()?.toLowerCase();
+    if (!tiposArchivosPermitidos.includes(extension || "")) return "Tipo de archivo no permitido";
     return null;
   };
 
@@ -109,7 +99,6 @@ export default function InformacionSolicitud({
     const archivosSeleccionados = Array.from(event.target.files || []);
     setErrorArchivo("");
 
-    // Validar límite de archivos
     if (archivos.length + archivosSeleccionados.length > 5) {
       setErrorArchivo("No puedes subir más de 5 archivos en total");
       return;
@@ -124,8 +113,6 @@ export default function InformacionSolicitud({
         return;
       }
 
-
-       
       if (contieneCaracteresEspeciales(limpiarNombreArchivo(archivo.name.trim()))) {
         setErrorArchivo("El nombre del archivo contiene caracteres no permitidos.");
         return;
@@ -140,13 +127,12 @@ export default function InformacionSolicitud({
       });
     }
 
-    onArchivosChange([...archivos, ...nuevosArchivos]);
-    // Limpiar el input
-    event.target.value = '';
+    onArchivosChange?.([...archivos, ...nuevosArchivos]);
+    event.target.value = "";
   };
 
   const eliminarArchivo = (id: string) => {
-    onArchivosChange(archivos.filter(archivo => archivo.id !== id));
+    onArchivosChange?.(archivos.filter(archivo => archivo.id !== id));
   };
 
   return (
@@ -158,10 +144,13 @@ export default function InformacionSolicitud({
       {/* Tipo de solicitud */}
       <div className="space-y-2">
         <Label htmlFor="tipoSolicitud" className="text-slate-800 font-medium">
-          Tipo de solicitud
-          <span className="text-red-500"> *</span>
+          Tipo de solicitud<span className="text-red-500"> *</span>
         </Label>
-        <Select value={tipoSolicitud} onValueChange={onTipoSolicitudChange} disabled={bBloqueado}>
+        <Select
+          value={tipoSolicitud}
+          onValueChange={onTipoSolicitudChange}
+          disabled={bBloqueado || modoVisualizacion} // NUEVO
+        >
           <SelectTrigger className="bg-white border-slate-200 text-slate-800 focus:border-blue-400 focus:ring-blue-400/20">
             <SelectValue placeholder="Selecciona el tipo de solicitud" />
           </SelectTrigger>
@@ -178,46 +167,47 @@ export default function InformacionSolicitud({
       {/* Órdenes médicas */}
       <div className="space-y-4">
         <Label className="text-slate-800 font-medium">
-          Órdenes médicas
-          <span className="text-red-500"> *</span>
+          Órdenes médicas<span className="text-red-500"> *</span>
         </Label>
-        
-        <div className="space-y-3">
-          <div className="flex items-center gap-2">
-            <Input
-              type="file"
-              multiple
-              accept={tiposArchivosPermitidos.join(',')}
-              onChange={manejarSeleccionArchivos}
-              className="hidden"
-              id="archivo-input"
-              disabled={bBloqueado}
-            />
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => document.getElementById('archivo-input')?.click()}
-              disabled={archivos.length >= 5}
-              className="bg-white border-slate-200 text-slate-800 hover:bg-slate-50"
-              disabled={bBloqueado}
-            >
-              <Upload className="w-4 h-4 mr-2" />
-              Subir archivos
-            </Button>
-            <span className="text-sm text-slate-600">
-              ({archivos.length}/5 archivos)
-            </span>
-          </div>
 
-          {errorArchivo && (
-            <p className="text-sm text-red-600">{errorArchivo}</p>
+        <div className="space-y-3">
+          {/* Botón de subir archivos */}
+          {!modoVisualizacion && (
+            <div className="flex items-center gap-2">
+              <Input
+                type="file"
+                multiple
+                accept={tiposArchivosPermitidos.join(",")}
+                onChange={manejarSeleccionArchivos}
+                className="hidden"
+                id="archivo-input"
+                disabled={bBloqueado}
+              />
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => document.getElementById("archivo-input")?.click()}
+                disabled={archivos.length >= 5 || bBloqueado}
+                className="bg-white border-slate-200 text-slate-800 hover:bg-slate-50"
+              >
+                <Upload className="w-4 h-4 mr-2" />
+                Subir archivos
+              </Button>
+              <span className="text-sm text-slate-600">
+                ({archivos.length}/5 archivos)
+              </span>
+            </div>
           )}
 
-          <p className="text-xs text-slate-500">
-            Tipos permitidos: Word, Excel, PPT, PDF, Imagen, Video, Audio. Máximo 10MB por archivo.
-          </p>
+          {errorArchivo && <p className="text-sm text-red-600">{errorArchivo}</p>}
 
-          {/* Lista de archivos subidos */}
+          {!modoVisualizacion && (
+            <p className="text-xs text-slate-500">
+              Tipos permitidos: Word, Excel, PPT, PDF, Imagen, Video, Audio. Máximo 10MB por archivo.
+            </p>
+          )}
+
+          {/* Lista de archivos */}
           {archivos.length > 0 && (
             <div className="space-y-2">
               {archivos.map((archivo) => (
@@ -226,19 +216,46 @@ export default function InformacionSolicitud({
                     <div className="flex items-center gap-2">
                       <FileText className="w-4 h-4 text-slate-600" />
                       <div>
-                        <p className="text-sm font-medium text-slate-800">{archivo.nombre}</p>
-                        <p className="text-xs text-slate-500">{formatearTamaño(archivo.tamaño)}</p>
+                        {modoVisualizacion && archivo.url ? (
+                          <a
+                            href={archivo.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-sm font-medium text-blue-600 hover:underline"
+                          >
+                            {archivo.nombre}
+                          </a>
+                        ) : archivo.isExisting && archivo.url ? (
+                          <a
+                            href={archivo.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-sm font-medium text-blue-600 hover:underline"
+                          >
+                            {archivo.nombre}
+                          </a>
+                        ) : (
+                          <p className="text-sm font-medium text-slate-800">
+                            {archivo.nombre}
+                          </p>
+                        )}
+                        <p className="text-xs text-slate-500">
+                          {archivo.tamaño ? formatearTamaño(archivo.tamaño) : ""}
+                        </p>
                       </div>
                     </div>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => eliminarArchivo(archivo.id)}
-                      className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                    >
-                      <X className="w-4 h-4" />
-                    </Button>
+
+                    {!modoVisualizacion && (
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => eliminarArchivo(archivo.id)}
+                        className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                      >
+                        <X className="w-4 h-4" />
+                      </Button>
+                    )}
                   </div>
                 </Card>
               ))}
@@ -250,29 +267,29 @@ export default function InformacionSolicitud({
       {/* Servicios solicitados */}
       <div className="space-y-4">
         <Label className="text-slate-800 font-medium">
-          Servicios domiciliarios solicitados
-          <span className="text-red-500"> *</span>
+          Servicios domiciliarios solicitados<span className="text-red-500"> *</span>
         </Label>
-        <ServiciosSelector 
+        <ServiciosSelector
           serviciosSeleccionados={serviciosSeleccionados}
           onServiciosChange={onServiciosChange}
-          bBloquear={bBloqueado}
+          bBloquear={bBloqueado || modoVisualizacion} // NUEVO
         />
         {serviciosSeleccionados.length > 0 && (
           <div className="flex flex-wrap gap-2">
             {serviciosSeleccionados.map((servicio) => (
               <Badge key={servicio} variant="secondary" className="bg-blue-100 text-blue-800">
                 {servicio}
-                {!bBloqueado && (
+                {!bBloqueado && !modoVisualizacion && (
                   <button
-                  type="button"
-                  onClick={() => onServiciosChange(serviciosSeleccionados.filter(s => s !== servicio))}
-                  className="ml-2 text-blue-600 hover:text-blue-800"
-                >
-                  <X className="w-3 h-3" />
-                </button>
+                    type="button"
+                    onClick={() =>
+                      onServiciosChange?.(serviciosSeleccionados.filter((s) => s !== servicio))
+                    }
+                    className="ml-2 text-blue-600 hover:text-blue-800"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
                 )}
-                
               </Badge>
             ))}
           </div>

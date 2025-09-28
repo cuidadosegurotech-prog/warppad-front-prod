@@ -33,12 +33,14 @@ interface ModalUpdate {
 
 interface ArchivoSubido {
   id: string;
-  file: File,
+  file?: File;              // NUEVO: opcional para modo visualización
   nombre: string;
-  tamaño: number;
-  tipo: string;
+  tamaño?: number;          // NUEVO: opcional para modo visualización
+  tipo?: string;
+  url?: string;             // NUEVO: para URL de S3
+  isExisting: boolean; // ✅ TRUE si viene de S3, FALSE si es nuevo
+  toDelete?: boolean;  // ✅ Opcional para marcar eliminados
 }
-
 
 export default function ModalUpdate({ ObjDatosSolicitud }: ModalUpdate) {
     const [solicitud, setSolicitud] = useState(null);
@@ -70,6 +72,7 @@ export default function ModalUpdate({ ObjDatosSolicitud }: ModalUpdate) {
     });
 
     interface AgregarSolicitud {
+    IdSolicitud: string;
     UsuarioSolicitud: string;
     TipoSolicitud: string;
     DescripcionSolicitud: string;
@@ -125,7 +128,7 @@ export default function ModalUpdate({ ObjDatosSolicitud }: ModalUpdate) {
         console.log(JSON.parse(sAdjuntos));
         setAdjuntos(sAdjuntos != null ? JSON.parse(sAdjuntos) : []);
         setServicios(objDatosSolicitudDetalle.solicitud_detalle.ServiciosSolicitadosPaciente.split(","));
-        await fnCargarDatosFormulario(objDatosSolicitudDetalle.solicitud_detalle, objDatosSolicitudDetalle.solicitud_detalle.ServiciosSolicitadosPaciente.split(","));
+        await fnCargarDatosFormulario(objDatosSolicitudDetalle.solicitud_detalle, objDatosSolicitudDetalle.solicitud_detalle.ServiciosSolicitadosPaciente.split(","), sAdjuntos != null ? JSON.parse(sAdjuntos) : []);
         setSolicitudDetalle(objDatosSolicitudDetalle.solicitud_detalle);
         //setServicios(solicitud["ServiciosSolicitadosPaciente"].split(","));
         console.log("formdata");
@@ -133,7 +136,7 @@ export default function ModalUpdate({ ObjDatosSolicitud }: ModalUpdate) {
         // console.log(servicios)
     }
 
-    const fnCargarDatosFormulario = async (objSolicitud, servicios)=>{
+    const fnCargarDatosFormulario = async (objSolicitud, servicios, vsAjuntos)=>{
         console.log(objSolicitud);
         setFormData({
                 // Datos del paciente
@@ -153,7 +156,7 @@ export default function ModalUpdate({ ObjDatosSolicitud }: ModalUpdate) {
                 prestador: objSolicitud.Prestador,
                 // Información de la solicitud
                 tipoSolicitud: objSolicitud.TipoSolicitud,
-                archivos: [] as ArchivoSubido[],
+                archivos: vsAjuntos,
                 correos: objSolicitud.CorreosDestinatarios.split(", "),
                 serviciosSeleccionados: servicios,
         });
@@ -216,6 +219,7 @@ export default function ModalUpdate({ ObjDatosSolicitud }: ModalUpdate) {
             }
             
             const agregarSolicitud: AgregarSolicitud = {
+              IdSolicitud: ObjDatosSolicitud.Id,
               UsuarioSolicitud: authenticated && keycloak?.tokenParsed?.name, // Usuario que realiza el login en Keycloak 
               TipoSolicitud: formData.tipoSolicitud,
               DescripcionSolicitud: formData.descripcionSolicitud,
@@ -262,12 +266,23 @@ export default function ModalUpdate({ ObjDatosSolicitud }: ModalUpdate) {
             console.log("Nueva solicitud:", agregarSolicitud);
             formularioData.set("Data", JSON.stringify(agregarSolicitud));
     
-            formData.archivos.map((file)=>{
-              formularioData.append("archivos", file.file);
+            // --- Archivos NUEVOS (subir al S3) ---
+            formData.archivos
+            .filter((archivo) => !archivo.isExisting && archivo.file) // ⬅️ Solo los nuevos
+            .forEach((archivo) => {
+                formularioData.append("archivos", archivo.file!);
             });
+
+            // --- Archivos EXISTENTES (ya en S3, solo IDs) ---
+            const idsExistentes = formData.archivos
+            .filter((archivo) => archivo.isExisting)
+            .map((archivo) => archivo.id);
+
+            // Enviar lista de IDs en un campo JSON
+            formularioData.append("idsExistentes", JSON.stringify(idsExistentes));
     
             //const result = await fetch(`${API_URL}/api/Solicitudes/AgregarSolicitud`, { method: "POST", headers: { 'Content-Type': "application/json", "Authorization": `Bearer ${token}` }, body: JSON.stringify(agregarSolicitud) }).then(response => response.json()).then(data => {(!data.Error) ? toast.success(data.Message) : toast.error(data.Message); return data}).catch(exception => {toast.error(`ERROR en handleSubmit() [ ${exception.name} - ${exception.message} ]`); return { Error : true, Message : `ERROR en handleSubmit() [ ${exception.name} - ${exception.message} ]`}});
-            const result = await fetch(`${API_URL}/api/Solicitudes/AgregarSolicitud`, { method: "POST", headers: {"Authorization": `Bearer ${token}` }, body: formularioData }).then(response => response.json()).then(data => {(!data.Error) ? toast.success(data.Message) : toast.error(data.Message); return data}).catch(exception => {toast.error(`ERROR en handleSubmit() [ ${exception.name} - ${exception.message} ]`); e.target.disabled = false; return { Error : true, Message : `ERROR en handleSubmit() [ ${exception.name} - ${exception.message} ]`}});
+            const result = await fetch(`${API_URL}/api/Solicitudes/ActualizarSolicitud`, { method: "POST", headers: {"Authorization": `Bearer ${token}` }, body: formularioData }).then(response => response.json()).then(data => {(!data.Error) ? toast.success(data.Message) : toast.error(data.Message); return data}).catch(exception => {toast.error(`ERROR en handleSubmit() [ ${exception.name} - ${exception.message} ]`); e.target.disabled = false; return { Error : true, Message : `ERROR en handleSubmit() [ ${exception.name} - ${exception.message} ]`}});
             console.log('Resultado al realizar el guardado de la solicitud =>', result)
             if(!result.Error){
               await fetch(`${API_URL}/api/email/EnvioEmailDestinatario`, { method: "POST", headers: { 'Content-Type': "application/json", "Authorization": `Bearer ${token}` }, body: JSON.stringify(result.Result[0]) }).then(response => response.json()).then(data => {(!data.Error) ? toast.success(data.Message) : toast.error(data.Message);}).catch(exception => {toast.error(`ERROR en handleSubmit() [ ${exception.name} - ${exception.message} ]`); return { Error : true, Message : `ERROR en handleSubmit() [ ${exception.name} - ${exception.message} ]`}});
@@ -351,7 +366,7 @@ export default function ModalUpdate({ ObjDatosSolicitud }: ModalUpdate) {
                                 prestador={formData.prestador}
                                 onRegionalChange={(value) => setFormData({ ...formData, regional: value })}
                                 onPrestadorChange={(value) => setFormData({ ...formData, prestador: value })}
-                                bBloquear={true}
+                                bBloquear={false}
                             />
                         </div>
 

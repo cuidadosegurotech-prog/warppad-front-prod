@@ -32,11 +32,12 @@ interface ModalUpdate {
 }
 
 interface ArchivoSubido {
-    id: string;
-    file: File,
-    nombre: string;
-    tamaño: number;
-    tipo: string;
+  id: string;
+  file?: File;              // NUEVO: opcional para modo visualización
+  nombre: string;
+  tamaño?: number;          // NUEVO: opcional para modo visualización
+  tipo?: string;
+  url?: string;             // NUEVO: para URL de S3
 }
 
 
@@ -122,10 +123,12 @@ export default function ModalUpdate({ ObjDatosSolicitud }: ModalUpdate) {
         //console.log(vObjSolicitud[0]);
         setSolicitud(vObjSolicitud[0])
         const sAdjuntos = vObjSolicitud[0].Adjuntos;
+        console.log("Adjuntooooooos");
         console.log(JSON.parse(sAdjuntos));
         setAdjuntos(sAdjuntos != null ? JSON.parse(sAdjuntos) : []);
         setServicios(objDatosSolicitudDetalle.solicitud_detalle.ServiciosSolicitadosPaciente.split(","));
-        await fnCargarDatosFormulario(objDatosSolicitudDetalle.solicitud_detalle, objDatosSolicitudDetalle.solicitud_detalle.ServiciosSolicitadosPaciente.split(","));
+        console.log("Antes de setear la informacion del formData");
+        await fnCargarDatosFormulario(objDatosSolicitudDetalle.solicitud_detalle, objDatosSolicitudDetalle.solicitud_detalle.ServiciosSolicitadosPaciente.split(","),sAdjuntos != null ? JSON.parse(sAdjuntos) : []);
         setSolicitudDetalle(objDatosSolicitudDetalle.solicitud_detalle);
         //setServicios(solicitud["ServiciosSolicitadosPaciente"].split(","));
         console.log("formdata");
@@ -133,8 +136,13 @@ export default function ModalUpdate({ ObjDatosSolicitud }: ModalUpdate) {
         // console.log(servicios)
     }
 
-    const fnCargarDatosFormulario = async (objSolicitud, servicios) => {
-        console.log(objSolicitud);
+    const fnCargarDatosFormulario = async (objSolicitud, servicios, vsAjuntos) => {
+        // console.log("Lo que llego en objSolicitud")
+        // console.log(objSolicitud);
+        // console.log("Antes de setear la informacion del formData");
+        // console.log("Los adjuntos de la solicitud son ", Adjuntos);
+        let vsCorreos = objSolicitud.CorreosDestinatarios.split(", ") || [];
+        console.log("Correos recibidos",vsCorreos);
         setFormData({
             // Datos del paciente
             tipoDocumento: objSolicitud.TipoIdentificacion,
@@ -153,10 +161,11 @@ export default function ModalUpdate({ ObjDatosSolicitud }: ModalUpdate) {
             prestador: objSolicitud.Prestador,
             // Información de la solicitud
             tipoSolicitud: objSolicitud.TipoSolicitud,
-            archivos: [] as ArchivoSubido[],
-            correos: objSolicitud.CorreosDestinatarios.split(", "),
+            archivos: vsAjuntos,
+            correos: vsCorreos,
             serviciosSeleccionados: servicios,
         });
+        console.log("Luego de setear bro");
     }
     // useEffect(()=>{
     //     const fnObtenerDetalleSolicitud = async ()=>{
@@ -366,6 +375,7 @@ export default function ModalUpdate({ ObjDatosSolicitud }: ModalUpdate) {
                                 onArchivosChange={(archivos) => setFormData({ ...formData, archivos })}
                                 onServiciosChange={(servicios) => setFormData({ ...formData, serviciosSeleccionados: servicios })}
                                 bBloqueado={true}
+                                modoVisualizacion={true}
                             />
                         </div>
 

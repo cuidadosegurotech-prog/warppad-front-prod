@@ -151,6 +151,21 @@ export default function ConsultarSolicitudes() {
     }
   };
 
+    const getStatusIconResultado = (estado: string) => {
+    switch (estado) {
+      case "ADMISIONADO":
+        return <CheckCircle className="w-4 h-4 text-green-600" />;
+      case "En progreso":
+        return <Clock className="w-4 h-4 text-yellow-600" />;
+      case "Pendiente":
+        return <AlertCircle className="w-4 h-4 text-orange-600" />;
+      case "NO ADMISIONADO":
+        return <XCircle className="w-4 h-4 text-red-600" />;
+      default:
+        return <AlertCircle className="w-4 h-4 text-blue-600" />;
+    }
+  };
+
   const getStatusColor = (estado: string) => {
     switch (estado) {
       case "Completado":
@@ -160,6 +175,21 @@ export default function ConsultarSolicitudes() {
       case "Pendiente":
         return "bg-orange-100 text-orange-700 border-orange-200";
       case "Cancelado":
+        return "bg-red-100 text-red-700 border-red-200";
+      default:
+        return "bg-blue-100 text-blue-700 border-blue-200";
+    }
+  };
+
+  const getStatusColorRespuesta = (estado: string) => {
+    switch (estado) {
+      case "ADMISIONADO":
+        return "bg-green-100 text-green-700 border-green-200";
+      case "En progreso":
+        return "bg-yellow-100 text-yellow-700 border-yellow-200";
+      case "Pendiente":
+        return "bg-orange-100 text-orange-700 border-orange-200";
+      case "NO ADMISIONADO":
         return "bg-red-100 text-red-700 border-red-200";
       default:
         return "bg-blue-100 text-blue-700 border-blue-200";
@@ -360,13 +390,14 @@ export default function ConsultarSolicitudes() {
                 <TableHead className="text-slate-700 font-semibold py-3 text-sm">Regional</TableHead>
                 <TableHead className="text-slate-700 font-semibold py-3 text-sm">EPS</TableHead>
                 <TableHead className="text-slate-700 font-semibold py-3 text-sm">Estado</TableHead>
+                <TableHead className="text-slate-700 font-semibold py-3 text-sm">Resultado solicitud</TableHead>
                 <TableHead className="text-slate-700 font-semibold py-3 text-sm">Prioridad</TableHead>
                 <TableHead className="text-slate-700 font-semibold py-3 text-sm">Tipo</TableHead>
                 <TableHead className="text-slate-700 font-semibold py-3 text-sm">Fecha Solicitud</TableHead>
                 <TableHead className="text-slate-700 font-semibold py-3 text-sm">Fecha Respuesta</TableHead>
                 <TableHead className="text-slate-700 font-semibold py-3 text-sm">Responsable</TableHead>
                 <TableHead className="text-slate-700 font-semibold py-3 text-sm">Departamento</TableHead>
-                <TableHead className="text-slate-700 font-semibold py-3 text-sm">Observaciones</TableHead>
+                {/* <TableHead className="text-slate-700 font-semibold py-3 text-sm">Observaciones</TableHead> */}
                 <TableHead className="text-slate-700 font-semibold py-3 text-sm">Acciones</TableHead>
               </TableRow>
             </TableHeader>
@@ -429,6 +460,14 @@ export default function ConsultarSolicitudes() {
                         </Badge>
                       </div>
                     </TableCell>
+                    <TableCell className="py-4">
+                      <div className="flex items-center gap-2">
+                        {getStatusIconResultado(solicitud.ResultadoSolicitud)}
+                        <Badge variant="outline" className={`${getStatusColorRespuesta(solicitud.ResultadoSolicitud)} font-medium text-xs`}>
+                          {solicitud.ResultadoSolicitud}
+                        </Badge>
+                      </div>
+                    </TableCell>
                     <TableCell className="py-3">
                       <Badge variant="outline" className={`${getPriorityColor(solicitud.prioridad)} text-xs`}>
                         {solicitud.prioridad}
@@ -440,7 +479,7 @@ export default function ConsultarSolicitudes() {
                       </Badge>
                     </TableCell>
                     <TableCell className="text-slate-600 text-xs py-3">
-                      {new Date(solicitud.fechaCreacion).toLocaleDateString()}
+                      {solicitud.fechaCreacion}
                     </TableCell>
                     <TableCell className="text-slate-600 text-xs py-3">
                       <span className="text-blue-600 font-semibold">
@@ -452,21 +491,21 @@ export default function ConsultarSolicitudes() {
                     </TableCell>
                     <TableCell className="text-slate-600 text-xs py-3">
                       <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200 text-xs">
-                        {solicitud.departamento}
+                        {solicitud.Departamento}
                       </Badge>
                     </TableCell>
-                    <TableCell className="text-slate-600 text-xs py-3 max-w-xs">
+                    {/* <TableCell className="text-slate-600 text-xs py-3 max-w-xs">
                       <div className="truncate" title={solicitud.observaciones}>
                         {solicitud.observaciones}
                       </div>
-                    </TableCell>
+                    </TableCell> */}
                     <TableCell className="py-3">
                      {/* <Button variant="outline" size="sm">
                         <Eye className="w-3 h-3 mr-1" />
                         Ver
                       </Button> */}
                       <ModalDetalle key={solicitud.Id} ObjDatosSolicitud={solicitud}></ModalDetalle>
-                      <ModalUpdate key={solicitud.Id} ObjDatosSolicitud={solicitud}></ModalUpdate>
+                      {(solicitud.ResultadoSolicitud == "NO ADMISIONADO") && (<ModalUpdate key={solicitud.Id} ObjDatosSolicitud={solicitud}></ModalUpdate>)}
                     </TableCell>
                   </TableRow>
                 ))
