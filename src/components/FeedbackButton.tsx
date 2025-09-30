@@ -6,6 +6,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
+import { useKeycloak } from "@/context/KeycloakContext";
+
+const API_URL = import.meta.env.VITE_CK_BACKEND_URL;
 
 export function FeedbackButton() {
   const { toast } = useToast();
@@ -15,8 +18,9 @@ export function FeedbackButton() {
     email: "",
     message: ""
   });
+  const { token, authenticated, keycloak } = useKeycloak();
 
-  const handleFeedbackSubmit = () => {
+  const handleFeedbackSubmit = async() => {
     if (!feedbackForm.message.trim()) {
       toast({
         title: "Error",
@@ -31,7 +35,7 @@ export function FeedbackButton() {
       title: "¡Gracias por tu feedback!",
       description: "Tu sugerencia ha sido enviada correctamente. La revisaremos pronto.",
     });
-    
+    const resultado = await fetch(`${API_URL}/api/Feedback/Sugerencia`, { method : "POST" ,headers: { "Content-Type" : "Application/json", "Authorization" : `Brearer ${token}` }, body: JSON.stringify({ Feedback : feedbackForm.message, Correo: feedbackForm.email, Nombre: feedbackForm.name }) }).then(response => response.json()).then(data => data).catch(ex => console.error(`ERROR en envio de sugerencia() [ ${ex.name} - ${ex.message} ]`));
     // Limpiar formulario y cerrar modal
     setFeedbackForm({ name: "", email: "", message: "" });
     setFeedbackOpen(false);

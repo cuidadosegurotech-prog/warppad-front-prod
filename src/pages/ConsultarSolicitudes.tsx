@@ -572,7 +572,7 @@ export default function ConsultarSolicitudes() {
               <Input
                 placeholder="Buscar por título, ID o tipo..."
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={(e) =>{handlePageChange(1); setSearchTerm(e.target.value)}}
                 className="pl-10 h-10 border-slate-300"
               />
             </div>
