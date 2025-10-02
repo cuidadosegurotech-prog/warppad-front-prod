@@ -354,6 +354,12 @@ export default function DatosPaciente({
               <SelectItem value="RC" className="text-slate-800 hover:bg-slate-50">
                 Registro Civil
               </SelectItem>
+              <SelectItem value="PE" className="text-slate-800 hover:bg-slate-50">
+                Permiso Especial
+              </SelectItem>
+              <SelectItem value="PT" className="text-slate-800 hover:bg-slate-50">
+                Permiso por Proteccion Temporal
+              </SelectItem>
             </SelectContent>
           </Select>
         </div>
