@@ -368,7 +368,7 @@ export default function ConsultarSolicitudes() {
               
               <div className="flex lg:flex-col gap-2">
                 <ModalDetalle key={solicitud.Id} ObjDatosSolicitud={solicitud}></ModalDetalle>
-                <ModalUpdate key={solicitud.Id} ObjDatosSolicitud={solicitud}></ModalUpdate>
+                {(solicitud.ResultadoSolicitud == "NO ADMISIONADO") && (<ModalUpdate key={solicitud.Id} ObjDatosSolicitud={solicitud}></ModalUpdate>)}
               </div>
             </div>
           </div>
@@ -397,7 +397,7 @@ export default function ConsultarSolicitudes() {
                 <TableHead className="text-slate-700 font-semibold py-3 text-sm">Fecha Respuesta</TableHead>
                 <TableHead className="text-slate-700 font-semibold py-3 text-sm">Responsable</TableHead>
                 <TableHead className="text-slate-700 font-semibold py-3 text-sm">Departamento</TableHead>
-                {/* <TableHead className="text-slate-700 font-semibold py-3 text-sm">Observaciones</TableHead> */}
+                <TableHead className="text-slate-700 font-semibold py-3 text-sm">Resultado Solicitud</TableHead>
                 <TableHead className="text-slate-700 font-semibold py-3 text-sm">Acciones</TableHead>
               </TableRow>
             </TableHeader>
@@ -494,11 +494,11 @@ export default function ConsultarSolicitudes() {
                         {solicitud.Departamento}
                       </Badge>
                     </TableCell>
-                    {/* <TableCell className="text-slate-600 text-xs py-3 max-w-xs">
-                      <div className="truncate" title={solicitud.observaciones}>
-                        {solicitud.observaciones}
+                    <TableCell className="text-slate-600 text-xs py-3 max-w-xs">
+                      <div className="truncate" title={solicitud.DescripcionResultadoSolicitud}>
+                        {solicitud.DescripcionResultadoSolicitud}
                       </div>
-                    </TableCell> */}
+                    </TableCell>
                     <TableCell className="py-3">
                      {/* <Button variant="outline" size="sm">
                         <Eye className="w-3 h-3 mr-1" />
