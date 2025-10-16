@@ -357,7 +357,7 @@ export default function ModalUpdate({ ObjDatosSolicitud }: ModalUpdate) {
                             onPuntoReferenciaChange={(value) => setFormData({ ...formData, puntoReferencia: value })}
                             onTelefonosChange={(value) => setFormData({ ...formData, telefonos: value })}
                             onDatosMunicipioChange={(value) => setFormData({ ...formData, regional: value[0]["departamento"], ciudadMunicipio : value[0]["nombre"]})}
-                            bBloquear={true}
+                            bBloquear={false}
                         />
 
                         {/* Información del Prestador */}
@@ -367,7 +367,7 @@ export default function ModalUpdate({ ObjDatosSolicitud }: ModalUpdate) {
                                 prestador={formData.prestador}
                                 onRegionalChange={(value) => setFormData({ ...formData, regional: value })}
                                 onPrestadorChange={(value) => setFormData({ ...formData, prestador: value })}
-                                bBloquear={true}
+                                bBloquear={false}
                             />
                         </div>
 
@@ -380,15 +380,15 @@ export default function ModalUpdate({ ObjDatosSolicitud }: ModalUpdate) {
                                 onTipoSolicitudChange={(value) => setFormData({ ...formData, tipoSolicitud: value })}
                                 onArchivosChange={(archivos) => setFormData({ ...formData, archivos })}
                                 onServiciosChange={(servicios) => setFormData({ ...formData, serviciosSeleccionados: servicios })}
-                                bBloqueado={true}
-                                modoVisualizacion={true}
+                                bBloqueado={false}
+                                modoVisualizacion={false}
                             />
                         </div>
 
                        <CorreosDestinatarioSolicitud
                         correosDestinatarios={formData.correos}
                         onCorreosChange={(Correos) => setFormData({ ...formData, correos: Correos})}
-                        bBloqueado={true}
+                        bBloqueado={false}
                         />
                         {/**Informacion Descripción general */}
                         <DescripcionSolicitud 
