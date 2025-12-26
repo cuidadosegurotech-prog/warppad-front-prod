@@ -468,7 +468,7 @@ export default function DatosPaciente({
             <SelectTrigger className="bg-white border-slate-200 text-slate-800 focus:border-blue-400 focus:ring-blue-400/20 disabled:opacity-50">
               <SelectValue placeholder={departamento ? "Seleccione la Ciudad/Municipio" : "Primero selecciona un departamento"} />
             </SelectTrigger>
-            <SelectContent enableSearch={true} onSearchChange={handleSearchDepartamento} className="bg-white border-slate-200 shadow-lg z-[100] max-h-[200px] overflow-y-auto">
+            <SelectContent enableSearch={false} onSearchChange={handleSearchDepartamento} className="bg-white border-slate-200 shadow-lg z-[100] max-h-[200px] overflow-y-auto">
               {municipiosDepartamento.map((ciudadMunicipio) => (
                 <SelectItem 
                   key={`${ciudadMunicipio.nombre} - ${ciudadMunicipio.departamento}`} 
