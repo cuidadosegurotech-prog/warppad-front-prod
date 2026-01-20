@@ -135,6 +135,24 @@ export default function NuevaSolicitud() {
           return;
         }
         
+        if (formData.departamento == "") {
+          toast.error("Por favor seleccione el departamento.");
+          e.target.disabled = false;
+          return;
+        }
+
+        if (formData.ciudadMunicipio  == "") {
+          toast.error("Por favor seleccione la ciudad/municipio.");
+          e.target.disabled = false;
+          return;
+        }
+
+        if (formData.regional  == "") {
+          toast.error("Por favor seleccione la regional.");
+          e.target.disabled = false;
+          return;
+        }
+
         const agregarSolicitud: AgregarSolicitud = {
           UsuarioSolicitud: authenticated && keycloak?.tokenParsed?.name, // Usuario que realiza el login en Keycloak 
           TipoSolicitud: formData.tipoSolicitud,
