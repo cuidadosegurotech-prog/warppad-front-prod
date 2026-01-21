@@ -124,7 +124,6 @@ export default function NuevaSolicitud() {
   
 
   const handleSubmit = async (e: React.FormEvent) => {
-    console.log(`Enviando datos bro2...`);
     e.preventDefault();
     e.target.disabled = true;
     if(fnValidarCampos(e) && fnValidarNumeroTelefono(e)){
