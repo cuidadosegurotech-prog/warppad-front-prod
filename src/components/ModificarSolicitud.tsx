@@ -126,7 +126,14 @@ export default function ModalUpdate({ ObjDatosSolicitud }: ModalUpdate) {
         setSolicitud(vObjSolicitud[0])
         const sAdjuntos = vObjSolicitud[0].Adjuntos;
         console.log(JSON.parse(sAdjuntos));
-        setAdjuntos(sAdjuntos != null ? JSON.parse(sAdjuntos) : []);
+        const adjuntosParseados = sAdjuntos != null ? JSON.parse(sAdjuntos) : [];
+        const adjuntosNormalizados = adjuntosParseados.map((a) => ({
+          ...a,
+          isExisting: true,
+          toDelete: false
+        }));
+        setAdjuntos(adjuntosNormalizados);
+        //setAdjuntos(sAdjuntos != null ? JSON.parse(sAdjuntos) : []);
         setServicios(objDatosSolicitudDetalle.solicitud_detalle.ServiciosSolicitadosPaciente.split(","));
         await fnCargarDatosFormulario(objDatosSolicitudDetalle.solicitud_detalle, objDatosSolicitudDetalle.solicitud_detalle.ServiciosSolicitadosPaciente.split(","), sAdjuntos != null ? JSON.parse(sAdjuntos) : []);
         setSolicitudDetalle(objDatosSolicitudDetalle.solicitud_detalle);
@@ -207,7 +214,7 @@ export default function ModalUpdate({ ObjDatosSolicitud }: ModalUpdate) {
     };
   
     const handleSubmit = async (e: React.FormEvent) => {
-        console.log(`Enviando datos bro2...`);
+        //console.log(`Enviando datos bro2...`);
         e.preventDefault();
         e.target.disabled = true;
         if(fnValidarCampos(e) && fnValidarNumeroTelefono(e)){
@@ -215,9 +222,28 @@ export default function ModalUpdate({ ObjDatosSolicitud }: ModalUpdate) {
             const formularioData = new FormData();
             if (!formData.tipoDocumento) {
               toast.error("Por favor seleccione un tipo de documento.");
+              e.target.disabled = false;
               return;
             }
-            
+
+            if (formData.departamento == "") {
+              toast.error("Por favor seleccione el departamento.");
+              e.target.disabled = false;
+              return;
+            }
+
+            if (formData.ciudadMunicipio  == "") {
+              toast.error("Por favor seleccione la ciudad/municipio.");
+              e.target.disabled = false;
+              return;
+            }
+
+            if (formData.regional  == "") {
+              toast.error("Por favor seleccione la regional.");
+              e.target.disabled = false;
+              return;
+            }
+
             const agregarSolicitud: AgregarSolicitud = {
               IdSolicitud: ObjDatosSolicitud.Id,
               UsuarioSolicitud: authenticated && keycloak?.tokenParsed?.name, // Usuario que realiza el login en Keycloak 
@@ -274,13 +300,19 @@ export default function ModalUpdate({ ObjDatosSolicitud }: ModalUpdate) {
             });
 
             // --- Archivos EXISTENTES (ya en S3, solo IDs) ---
-            const idsExistentes = formData.archivos
-            .filter((archivo) => archivo.isExisting)
-            .map((archivo) => archivo.id);
+            // const idsExistentes = formData.archivos
+            // .filter((archivo) => archivo.isExisting)
+            // .map((archivo) => archivo.id);
 
-            // Enviar lista de IDs en un campo JSON
-            formularioData.append("idsExistentes", JSON.stringify(idsExistentes));
-    
+            // // Enviar lista de IDs en un campo JSON
+            // formularioData.append("idsExistentes", JSON.stringify(idsExistentes));
+                // --- IDs de archivos a eliminar ---
+            const idsEliminar = formData.archivos
+              .filter((archivo) => archivo.isExisting && archivo.toDelete)
+              .map((archivo) => archivo.id);
+
+            formularioData.append("idsEliminar", JSON.stringify(idsEliminar));
+            console.log("Datos que envia en el body la solicitud: ",formularioData.getAll('idsEliminar'));
             //const result = await fetch(`${API_URL}/api/Solicitudes/AgregarSolicitud`, { method: "POST", headers: { 'Content-Type': "application/json", "Authorization": `Bearer ${token}` }, body: JSON.stringify(agregarSolicitud) }).then(response => response.json()).then(data => {(!data.Error) ? toast.success(data.Message) : toast.error(data.Message); return data}).catch(exception => {toast.error(`ERROR en handleSubmit() [ ${exception.name} - ${exception.message} ]`); return { Error : true, Message : `ERROR en handleSubmit() [ ${exception.name} - ${exception.message} ]`}});
             const result = await fetch(`${API_URL}/api/Solicitudes/ActualizarSolicitud`, { method: "POST", headers: {"Authorization": `Bearer ${token}` }, body: formularioData }).then(response => response.json()).then(data => {(!data.Error) ? toast.success(data.Message) : toast.error(data.Message); return data}).catch(exception => {toast.error(`ERROR en handleSubmit() [ ${exception.name} - ${exception.message} ]`); e.target.disabled = false; return { Error : true, Message : `ERROR en handleSubmit() [ ${exception.name} - ${exception.message} ]`}});
             console.log('Resultado al realizar el guardado de la solicitud =>', result)

@@ -310,17 +310,17 @@ export default function DatosPaciente({
 
 
   const handleDepartamentoChange = (value: string) =>{
-    console.log("Departamento Seleccionado ",value);
+    //console.log("Departamento Seleccionado ",value);
     onDepartamentoChange(value);
     municipiosDisponibles = gvMunicipiosPorDepartamento[value]
     setmunicipiosDepartamento(municipiosDisponibles)
   };
 
   const handleSearchDepartamento = (value: string)=>{
-    console.log(value);
+    //console.log(value);
     //console.table(gvMunicipiosPorDepartamento[departamento]);
     const vObjMunicipiosDepartamento = value.length != 0 ?  gvMunicipiosPorDepartamento[departamento].filter(item => item.nombre.toLowerCase().includes(value.toLowerCase())) : gvMunicipiosPorDepartamento[departamento];
-    console.log("Los que obtuvo al realizar el filtro", vObjMunicipiosDepartamento);
+    //console.log("Los que obtuvo al realizar el filtro", vObjMunicipiosDepartamento);
     setmunicipiosDepartamento(vObjMunicipiosDepartamento);
   };
 

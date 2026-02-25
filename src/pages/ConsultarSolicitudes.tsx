@@ -8,18 +8,18 @@ import { Button } from "@/components/ui/button";
 import ExportExcel from '@/components/ExportExcel';
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { 
-  Pagination, 
-  PaginationContent, 
-  PaginationItem, 
-  PaginationLink, 
-  PaginationNext, 
-  PaginationPrevious 
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious
 } from "@/components/ui/pagination";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { 
+import {
   Table,
   TableBody,
   TableCell,
@@ -58,17 +58,17 @@ export default function ConsultarSolicitudes() {
 
 
 
-  useEffect(()=>{
-    const fnObtenerSolicitudes = async ()=>{
-      const resultado = await fetch(`${API_URL}/api/Solicitudes/ObtenerSolicitudes`, { method : "POST" ,headers: { "Content-Type" : "Application/json", "Authorization" : `Brearer ${token}` }, body: JSON.stringify({ EmailUsuarioSolicitud : authenticated && keycloak?.tokenParsed?.email }) }).then(response => response.json()).then(data => data).catch(ex => console.error(`ERROR en fnObtenerSolicitudes() [ ${ex.name} - ${ex.message} ]`));
+  useEffect(() => {
+    const fnObtenerSolicitudes = async () => {
+      const resultado = await fetch(`${API_URL}/api/Solicitudes/ObtenerSolicitudes`, { method: "POST", headers: { "Content-Type": "Application/json", "Authorization": `Brearer ${token}` }, body: JSON.stringify({ EmailUsuarioSolicitud: authenticated && keycloak?.tokenParsed?.email }) }).then(response => response.json()).then(data => data).catch(ex => console.error(`ERROR en fnObtenerSolicitudes() [ ${ex.name} - ${ex.message} ]`));
       console.log(resultado);
       const vObjSolicitudes = (!resultado.Error) ? resultado.Result : []
-      console.log("Solicitudes recibidas",vObjSolicitudes);
+      console.log("Solicitudes recibidas", vObjSolicitudes);
       setSolicitudes(vObjSolicitudes);
     }
     fnObtenerSolicitudes();
   }, []);
-  
+
   // Obtener valores únicos para los filtros
   const epsOptions = Array.from(new Set(solicitudes.map(s => s.ClinicaPrestadora))).sort();
   const estadoOptions = Array.from(new Set(solicitudes.map(s => s.estado))).sort();
@@ -97,36 +97,36 @@ export default function ConsultarSolicitudes() {
     }
   };
 
-  const exportToExcel = ({data})=>{
-    try{
+  const exportToExcel = ({ data }) => {
+    try {
       // 1️⃣ Crear hoja de cálculo a partir del JSON
-    const worksheet = XLSX.utils.json_to_sheet(data);
+      const worksheet = XLSX.utils.json_to_sheet(data);
 
-    // 2️⃣ Crear libro y agregar la hoja
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Datos");
+      // 2️⃣ Crear libro y agregar la hoja
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Datos");
 
-    // 3️⃣ Generar buffer Excel
-    const excelBuffer = XLSX.write(workbook, {
-      bookType: "xlsx",
-      type: "array",
-    });
+      // 3️⃣ Generar buffer Excel
+      const excelBuffer = XLSX.write(workbook, {
+        bookType: "xlsx",
+        type: "array",
+      });
 
-    // 4️⃣ Crear un blob y descargar
-    const dataFile = new Blob([excelBuffer], { type: "application/octet-stream" });
-    saveAs(dataFile, "reporte.xlsx");
-    }catch(ex){
+      // 4️⃣ Crear un blob y descargar
+      const dataFile = new Blob([excelBuffer], { type: "application/octet-stream" });
+      saveAs(dataFile, "reporte.xlsx");
+    } catch (ex) {
       console.error(`Error en fnExportToExcel() [ ${ex.name} - ${ex.message} ]`);
     }
   }
 
-  const renderModalDetalle = (idSolicitud: String)=>{
+  const renderModalDetalle = (idSolicitud: String) => {
     console.log('Mostrando detalles del registro #', idSolicitud)
   }
 
   const isOverdue = (fechaCreacion: string, estado: string) => {
     if (estado === "Completado" || estado === "Cancelado") return false;
-    
+
     try {
       const fecha = parseISO(fechaCreacion);
       const diasTranscurridos = differenceInDays(new Date(), fecha);
@@ -151,7 +151,7 @@ export default function ConsultarSolicitudes() {
     }
   };
 
-    const getStatusIconResultado = (estado: string) => {
+  const getStatusIconResultado = (estado: string) => {
     switch (estado) {
       case "ADMISIONADO":
         return <CheckCircle className="w-4 h-4 text-green-600" />;
@@ -213,20 +213,20 @@ export default function ConsultarSolicitudes() {
 
   const filteredSolicitudes = solicitudes.filter(solicitud => {
     const matchesSearch = solicitud.titulo.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    solicitud.Id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    solicitud.tipo.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    solicitud.Regional.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    solicitud.estado.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    solicitud.DatosPaciente.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    solicitud.ClinicaPrestadora.toLowerCase().includes(searchTerm.toLowerCase());
-    
+      solicitud.Id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      solicitud.tipo.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      //solicitud.Regional.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      solicitud.estado.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      solicitud.DatosPaciente.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      solicitud.ClinicaPrestadora.toLowerCase().includes(searchTerm.toLowerCase());
+
     const matchesEps = selectedEps === "all" || solicitud.ClinicaPrestadora === selectedEps;
     const matchesEstado = selectedEstado === "all" || solicitud.estado === selectedEstado;
-    
+
     return matchesSearch && matchesEps && matchesEstado;
   });
 
-  const solicitudesVencidas = filteredSolicitudes.filter(solicitud => 
+  const solicitudesVencidas = filteredSolicitudes.filter(solicitud =>
     isOverdue(solicitud.fechaCreacion, solicitud.estado)
   );
 
@@ -239,36 +239,148 @@ export default function ConsultarSolicitudes() {
     setCurrentPage(page);
   };
 
-  const handleExportData = () => {
-    const csvContent = [
-      // Headers
-      ["ID", "Título", "EPS", "Estado", "Prioridad", "Tipo", "Fecha Creación", "Fecha Actualización"],
-      // Data rows
-      ...filteredSolicitudes.map(solicitud => [
-        solicitud.id,
-        solicitud.titulo,
-        solicitud.eps,
-        solicitud.estado,
-        solicitud.prioridad,
-        solicitud.tipo,
-        solicitud.fechaCreacion,
-        solicitud.fechaActualizacion
-      ])
-    ];
-    
-    const csvString = csvContent.map(row => 
-      row.map(cell => `"${cell}"`).join(",")
-    ).join("\n");
-    
-    const blob = new Blob([csvString], { type: "text/csv;charset=utf-8;" });
-    const link = document.createElement("a");
-    const url = URL.createObjectURL(blob);
-    link.setAttribute("href", url);
-    link.setAttribute("download", `solicitudes_${new Date().toISOString().split('T')[0]}.csv`);
-    link.style.visibility = "hidden";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+
+  const fnCrearLineaTiempoSolicitudes = (vobjHistoricoSolicitud) => {
+    try {
+      let sLineaTiempoSolicitud = "";
+      vobjHistoricoSolicitud.map((itemSolicitud) => {
+        sLineaTiempoSolicitud = "CRONOLOGÍA COMPLETA DEL PROCESO";
+        JSON.parse(itemSolicitud["LineaTiempo"]).map((item) => {
+          sLineaTiempoSolicitud += fnHistorialEstadoSolicitud(item);
+        })
+        itemSolicitud["LineaTiempo"] = sLineaTiempoSolicitud;
+      })
+    } catch (ex) {
+      console.error(`ERROR en fnCrearLineaTiempoSolicitudes() [ ${ex.name} - ${ex.message} ]`);
+    }
+  }
+
+  const fnHistorialEstadoSolicitud = (Momento) => {
+    try {
+      return `
+    - ${Momento["estadoSolicitud"] == "Pendiente" ? "Solicitud Recibida" : (Momento["estadoSolicitud"] == "Proceso" ? "Proceso de Revisión" : (Momento["estadoSolicitud"] == "Completada" ? "Respuesta Final" : `${Momento["estadoSolicitud"]}`))}
+    ${Momento["estadoSolicitud"] == "Pendiente" ? "Su solicitud fue recibida y registrada en nuestro sistema" : (Momento["estadoSolicitud"] == "Proceso" ? "Revisión técnica y análisis legal realizado" : (Momento["estadoSolicitud"] == "Completada" ? "Notificación oficial enviada al solicitante" : `${Momento["resultadoSolicitud"]}`))}
+    ${Momento["fecha"]}
+      `;
+    } catch (ex) {
+      console.error(`ERROR en fnHistorialEstadoSolicitud() [ ${ex.name} - ${ex.message} ]`);
+    }
+  }
+
+
+  const handleExportData = async () => {
+    const sIdsSolicitudes = [...filteredSolicitudes.map(solicitud => solicitud.Id)].join(',');
+    const objSolicitudesDetalle = await fetch(`${API_URL}/api/Solicitudes/ObtenerDetalleSolicitudes`, { method: "POST", headers: { "Content-Type": "Application/json", "Authorization": `Bearer ${token}` }, body: JSON.stringify({ EmailUsuarioSolicitud: authenticated && keycloak?.tokenParsed?.email, IdsSolicitudes: sIdsSolicitudes }) }).then(response => response.json()).then(data => data).catch(ex => { return { Error: true, Message: `${ex.name} - ${ex.message}` } });
+    if (!objSolicitudesDetalle.Error) {
+      const { Result } = objSolicitudesDetalle;
+
+      fnCrearLineaTiempoSolicitudes(Result);
+
+      const csvContent = [
+        // Headers
+        ["Id",
+          "FechaSolicitud",
+          "UsuarioSolicitud",
+          "TipoIdentificacion",
+          "NumeroIdentificacion",
+          "NombrePaciente",
+          "BarrioPaciente",
+          "DireccionPaciente",
+          "ServiciosSolicitadosPaciente",
+          "DescripcionSolicitud",
+          "EstadoSolicitud",
+          "TipoSolicitud",
+          "Estado",
+          //"DescripcionSolicitud",
+          "Admisionista",
+          "FechaAtencionSolicitud",
+          "ResultadoSolicitud",
+          "DescripcionResultadoSolicitud",
+          "EmailUsuarioSolicitud",
+          "Regional",
+          //"EmailUsuarioSolicitud",
+          "CodRegional",
+          "Prestador",
+          "CorreosDestinatarios",
+          //"Adjuntos",
+          "Historico Linea Tiempo"],
+        // Data rows
+        ...Result.map(solicitud => [
+          solicitud.Id,
+          solicitud.FechaSolicitud,
+          solicitud.UsuarioSolicitud,
+          solicitud.TipoIdentificacion,
+          solicitud.NumeroIdentificacion,
+          solicitud.NombrePaciente,
+          solicitud.BarrioPaciente,
+          solicitud.DireccionPaciente,
+          solicitud.ServiciosSolicitadosPaciente,
+          solicitud.DescripcionSolicitud,
+          solicitud.EstadoSolicitud,
+          solicitud.TipoSolicitud,
+          solicitud.Estado,
+          //solicitud.DescripcionSolicitud,
+          solicitud.Admisionista,
+          solicitud.FechaAtencionSolicitud,
+          solicitud.ResultadoSolicitud,
+          solicitud.DescripcionResultadoSolicitud,
+          solicitud.EmailUsuarioSolicitud,
+          solicitud.Regional,
+          //solicitud.EmailUsuarioSolicitud,
+          solicitud.CodRegional,
+          solicitud.Prestador,
+          solicitud.CorreosDestinatarios,
+          //solicitud.Adjuntos,
+          solicitud.LineaTiempo
+        ])
+      ];
+
+      const csvString = csvContent.map(row =>
+        row.map(cell => `"${cell}"`).join(",")
+      ).join("\n");
+
+      const blob = new Blob([csvString], { type: "text/csv;charset=utf-8;" });
+      const link = document.createElement("a");
+      const url = URL.createObjectURL(blob);
+      link.setAttribute("href", url);
+      link.setAttribute("download", `solicitudes_${new Date().toISOString().split('T')[0]}.csv`);
+      link.style.visibility = "hidden";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+    } else {
+      console.log("Error al exportar los datos de la grid, ", objSolicitudesDetalle?.Message);
+    }
+    // const csvContent = [
+    //   // Headers
+    //   ["ID", "Título", "EPS", "Estado", "Prioridad", "Tipo", "Fecha Creación", "Fecha Actualización"],
+    //   // Data rows
+    //   ...filteredSolicitudes.map(solicitud => [
+    //     solicitud.id,
+    //     solicitud.titulo,
+    //     solicitud.eps,
+    //     solicitud.estado,
+    //     solicitud.prioridad,
+    //     solicitud.tipo,
+    //     solicitud.fechaCreacion,
+    //     solicitud.fechaActualizacion
+    //   ])
+    // ];
+
+    // const csvString = csvContent.map(row => 
+    //   row.map(cell => `"${cell}"`).join(",")
+    // ).join("\n");
+
+    // const blob = new Blob([csvString], { type: "text/csv;charset=utf-8;" });
+    // const link = document.createElement("a");
+    // const url = URL.createObjectURL(blob);
+    // link.setAttribute("href", url);
+    // link.setAttribute("download", `solicitudes_${new Date().toISOString().split('T')[0]}.csv`);
+    // link.style.visibility = "hidden";
+    // document.body.appendChild(link);
+    // link.click();
+    // document.body.removeChild(link);
   };
 
   const handleFeedbackSubmit = () => {
@@ -286,7 +398,7 @@ export default function ConsultarSolicitudes() {
       title: "¡Gracias por tu feedback!",
       description: "Tu sugerencia ha sido enviada correctamente. La revisaremos pronto.",
     });
-    
+
     // Limpiar formulario y cerrar modal
     setFeedbackForm({ name: "", email: "", message: "" });
     setFeedbackOpen(false);
@@ -308,13 +420,12 @@ export default function ConsultarSolicitudes() {
         </div>
       ) : (
         currentSolicitudes.map((solicitud) => (
-          <div 
-            key={solicitud.Id} 
-            className={`p-4 transition-colors ${
-              isOverdue(solicitud.fechaCreacion, solicitud.estado) 
-                ? 'bg-red-50/30' 
+          <div
+            key={solicitud.Id}
+            className={`p-4 transition-colors ${isOverdue(solicitud.fechaCreacion, solicitud.estado)
+                ? 'bg-red-50/30'
                 : 'hover:bg-slate-50'
-            }`}
+              }`}
           >
             <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
               <div className="flex-1 space-y-3">
@@ -330,9 +441,9 @@ export default function ConsultarSolicitudes() {
                     </div>
                   )}
                 </div>
-                
+
                 <h3 className="text-lg font-semibold text-slate-800 leading-tight">{solicitud.titulo}</h3>
-                
+
                 <div className="flex flex-wrap gap-2">
                   <Badge variant="outline" className="bg-purple-50 text-purple-700 border-purple-200 text-xs">
                     {solicitud.ClinicaPrestadora}
@@ -347,7 +458,7 @@ export default function ConsultarSolicitudes() {
                     {solicitud.tipo}
                   </Badge>
                 </div>
-                
+
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 text-sm">
                   <div>
                     <span className="text-slate-500 font-medium text-xs">Creado</span>
@@ -360,12 +471,12 @@ export default function ConsultarSolicitudes() {
                   <div>
                     <span className="text-slate-500 font-medium text-xs">Tiempo transcurrido</span>
                     <div className="text-blue-600 font-semibold">
-                      {getTimeElapsed(solicitud.fechaCreacion,solicitud.fechaActualizacion)}
+                      {getTimeElapsed(solicitud.fechaCreacion, solicitud.fechaActualizacion)}
                     </div>
                   </div>
                 </div>
               </div>
-              
+
               <div className="flex lg:flex-col gap-2">
                 <ModalDetalle key={solicitud.Id} ObjDatosSolicitud={solicitud}></ModalDetalle>
                 {(solicitud.ResultadoSolicitud == "NO ADMISIONADO") && (<ModalUpdate key={solicitud.Id} ObjDatosSolicitud={solicitud}></ModalUpdate>)}
@@ -418,13 +529,12 @@ export default function ConsultarSolicitudes() {
                 </TableRow>
               ) : (
                 currentSolicitudes.map((solicitud) => (
-                  <TableRow 
-                    key={solicitud.Id} 
-                    className={`hover:bg-slate-50 border-slate-200 transition-colors ${
-                      isOverdue(solicitud.fechaCreacion, solicitud.estado) 
-                        ? 'bg-red-50/50 hover:bg-red-50' 
+                  <TableRow
+                    key={solicitud.Id}
+                    className={`hover:bg-slate-50 border-slate-200 transition-colors ${isOverdue(solicitud.fechaCreacion, solicitud.estado)
+                        ? 'bg-red-50/50 hover:bg-red-50'
                         : ''
-                    }`}
+                      }`}
                   >
                     <TableCell className="font-mono text-slate-600 py-3">
                       <div className="flex items-center gap-2">
@@ -434,7 +544,7 @@ export default function ConsultarSolicitudes() {
                         )}
                       </div>
                     </TableCell>
-                     <TableCell className="font-medium text-slate-800 max-w-xs py-3">
+                    <TableCell className="font-medium text-slate-800 max-w-xs py-3">
                       <div className="truncate text-sm" title={solicitud.titulo}>
                         {solicitud.titulo}
                       </div>
@@ -444,7 +554,7 @@ export default function ConsultarSolicitudes() {
                         {solicitud.DatosPaciente}
                       </div>
                     </TableCell>
-                     <TableCell className="font-medium text-slate-800 max-w-xs py-3">
+                    <TableCell className="font-medium text-slate-800 max-w-xs py-3">
                       <div className="truncate text-sm" title={solicitud.Regional}>
                         {solicitud.Regional}
                       </div>
@@ -500,7 +610,7 @@ export default function ConsultarSolicitudes() {
                       </div>
                     </TableCell>
                     <TableCell className="py-3">
-                     {/* <Button variant="outline" size="sm">
+                      {/* <Button variant="outline" size="sm">
                         <Eye className="w-3 h-3 mr-1" />
                         Ver
                       </Button> */}
@@ -572,11 +682,11 @@ export default function ConsultarSolicitudes() {
               <Input
                 placeholder="Buscar por título, ID o tipo..."
                 value={searchTerm}
-                onChange={(e) =>{handlePageChange(1); setSearchTerm(e.target.value)}}
+                onChange={(e) => { handlePageChange(1); setSearchTerm(e.target.value) }}
                 className="pl-10 h-10 border-slate-300"
               />
             </div>
-            
+
             <Button
               variant="outline"
               size="sm"
@@ -595,7 +705,7 @@ export default function ConsultarSolicitudes() {
                 <Filter className="w-4 h-4 text-slate-500" />
                 <span className="text-sm font-medium text-slate-700">Filtros:</span>
               </div>
-              
+
               <Select value={selectedEps} onValueChange={setSelectedEps}>
                 <SelectTrigger className="w-full sm:w-[180px] h-9">
                   <SelectValue placeholder="Todas las EPS" />
@@ -624,7 +734,7 @@ export default function ConsultarSolicitudes() {
                 </SelectContent>
               </Select>
             </div>
-            
+
             <div className="flex gap-2">
               <Button
                 variant={viewMode === "grid" ? "default" : "outline"}
@@ -657,16 +767,16 @@ export default function ConsultarSolicitudes() {
             <Pagination>
               <PaginationContent>
                 <PaginationItem>
-                  <PaginationPrevious 
+                  <PaginationPrevious
                     onClick={() => currentPage > 1 && handlePageChange(currentPage - 1)}
                     className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
                   />
                 </PaginationItem>
-                
+
                 {(() => {
                   const maxVisiblePages = 5;
                   const pages = [];
-                  
+
                   if (totalPages <= maxVisiblePages) {
                     // Si hay 5 páginas o menos, mostrar todas
                     for (let i = 1; i <= totalPages; i++) {
@@ -686,12 +796,12 @@ export default function ConsultarSolicitudes() {
                     // Si hay más de 5 páginas, mostrar solo 5 alrededor de la página actual
                     let startPage = Math.max(1, currentPage - 2);
                     let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
-                    
+
                     // Ajustar si estamos cerca del final
                     if (endPage - startPage < maxVisiblePages - 1) {
                       startPage = Math.max(1, endPage - maxVisiblePages + 1);
                     }
-                    
+
                     for (let i = startPage; i <= endPage; i++) {
                       pages.push(
                         <PaginationItem key={i}>
@@ -706,12 +816,12 @@ export default function ConsultarSolicitudes() {
                       );
                     }
                   }
-                  
+
                   return pages;
                 })()}
-                
+
                 <PaginationItem>
-                  <PaginationNext 
+                  <PaginationNext
                     onClick={() => currentPage < totalPages && handlePageChange(currentPage + 1)}
                     className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
                   />

@@ -131,9 +131,25 @@ export default function InformacionSolicitud({
     event.target.value = "";
   };
 
+  // const eliminarArchivo = (id: string) => {
+  //   onArchivosChange?.(archivos.filter(archivo => archivo.id !== id));
+  // };
   const eliminarArchivo = (id: string) => {
-    onArchivosChange?.(archivos.filter(archivo => archivo.id !== id));
+    const nuevos = archivos.map((archivo) => {
+      if (archivo.id !== id) return archivo;
+
+      // Si es archivo existente → marcar para borrar
+      if (archivo.isExisting) {
+        return { ...archivo, toDelete: true };
+      }
+
+      // Si es archivo nuevo → eliminar del array
+      return null;
+    }).filter(Boolean);
+
+    onArchivosChange?.(nuevos as ArchivoSubido[]);
   };
+
 
   return (
     <div className="space-y-6">
@@ -210,7 +226,7 @@ export default function InformacionSolicitud({
           {/* Lista de archivos */}
           {archivos.length > 0 && (
             <div className="space-y-2">
-              {archivos.map((archivo) => (
+              {archivos.filter(a => !a.toDelete).map((archivo) => (
                 <Card key={archivo.id} className="p-3 bg-slate-50 border-slate-200">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
