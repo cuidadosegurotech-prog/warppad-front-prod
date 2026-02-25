@@ -207,18 +207,42 @@ interface Municipio{
 
 const gvMunicipiosPorDepartamento: Record<string, Municipio[]> = {
 "bolivar" : [
+  {nombre: "Achí", departamento: "2024"},
+  {nombre: "Arenal", departamento: "2024"},
   {nombre: "Arjona", departamento: "1"},
+  {nombre: "Arroyohondo", departamento: "2006"},
+  {nombre: "Calamar", departamento: "2006"},
+  {nombre: "Cantagallo", departamento: "2006"},
   {nombre: "Cartagena de Indias", departamento: "1"},
+  {nombre: "Cicuco", departamento: "2024"},
   {nombre: "Clemencia", departamento: "1"},
+  {nombre: "Córdoba", departamento: "2006"},
+  {nombre: "El Carmen de Bolívar", departamento: "2006"},
+  {nombre: "El Guamo", departamento: "2006"},
+  {nombre: "Magangué", departamento: "2024"},
   {nombre: "Mahates", departamento: "1"},
   {nombre: "María La Baja", departamento: "1"},
+  {nombre: "Montecristo", departamento: "2024"},
+  {nombre: "Morales", departamento: "2024"},
+  {nombre: "Pinillos", departamento: "2024"},
   {nombre: "San Cristóbal", departamento: "1"},
+  {nombre: "San Fernando", departamento: "2024"},
+  {nombre: "San Jacinto", departamento: "2006"},
+  {nombre: "San Jacinto del Cauca", departamento: "2024"},
+  {nombre: "San Juan Nepomuceno", departamento: "2006"},
+  {nombre: "San Pablo", departamento: "2024"},
   {nombre: "Santa Catalina", departamento: "1"},
+  {nombre: "Santa Cruz de Mompox", departamento: "2024"},
   {nombre: "Santa Rosa", departamento: "1"},
+  {nombre: "Santa Rosa del Sur", departamento: "2024"},
+  {nombre: "Simití", departamento: "2024"},
   {nombre: "Soplaviento", departamento: "1"},
+  {nombre: "Talaigua Nuevo", departamento: "2024"},
+  {nombre: "Puerto Rico", departamento: "2024"},
   {nombre: "Turbaco", departamento: "1"},
   {nombre: "Turbaná", departamento: "1"},
   {nombre: "Villanueva", departamento: "1"},
+  {nombre: "Zambrano", departamento: "2006"}
 ]
 }
 
@@ -310,7 +334,7 @@ export default function DatosPaciente({
 
 
   const handleDepartamentoChange = (value: string) =>{
-    console.log("Departamento Seleccionado ",value);
+    //console.log("Departamento Seleccionado ",value);
     onDepartamentoChange(value);
     municipiosDisponibles = gvMunicipiosPorDepartamento[value]
     setmunicipiosDepartamento(municipiosDisponibles)
