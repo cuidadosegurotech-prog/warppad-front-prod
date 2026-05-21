@@ -11,6 +11,14 @@ interface Municipio{
   departamento: string
 }
 
+interface TipoIndentificacion{
+  id: string,
+  nombre: string,
+  permiteLetras: boolean
+}
+
+
+
 // const gvMunicipiosPorDepartamento: Record<string, Municipio[]> = {
 //   "atlantico" : [
 //     {nombre: "Barranquilla",departamento: "2025" },
@@ -263,6 +271,23 @@ const gvMunicipiosPorDepartamento: Record<string, Municipio[]> = {
 ]
 }
 
+const gvtiposDocumento: TipoIndentificacion[] = [
+  { id: "CC", nombre: "Cédula de Ciudadanía", permiteLetras: false },
+  { id: "CE", nombre: "Cédula de Extranjería", permiteLetras: true },
+  { id: "PA", nombre: "Pasaporte", permiteLetras: true },
+  { id: "TI", nombre: "Tarjeta de Identidad", permiteLetras: false },
+  { id: "RC", nombre: "Registro Civil", permiteLetras: false },
+  { id: "PE", nombre: "Permiso Especial", permiteLetras: true },
+  { id: "PT", nombre: "Permiso por Protección Temporal", permiteLetras: true },
+  { id: "SC", nombre: "Salvoconducto", permiteLetras: true },
+  { id: "CN", nombre: "CN - Certificado De Nacido Vivo", permiteLetras: false },
+  { id: "PR", nombre: "PR - Pasaporte De La ONU", permiteLetras: true },
+  { id: "NV", nombre: "NV - Certificado De Nacido Vivo", permiteLetras: false },
+  { id: "CD", nombre: "CD - Carnet Diplomático", permiteLetras: true },
+  { id: "MS", nombre: "MS - Menor sin Identificación", permiteLetras: true },
+  { id: "AS", nombre: "AS - Adulto sin Identificación", permiteLetras: true },
+];
+
 
 interface DatosPacienteProps {
   tipoDocumento: string;
@@ -337,9 +362,22 @@ export default function DatosPaciente({
     }
   }, [ciudadMunicipio]);
 
+  const tipoDocSeleccionado = gvtiposDocumento.find(
+    (doc) => doc.id === tipoDocumento
+  );
+
+  const permiteLetras = tipoDocSeleccionado?.permiteLetras ?? false;
+
+
   const handleNumeroChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let value = e.target.value;
+    if(permiteLetras){
+      value = value.replace(/[^0-9A-Z]/g, '');
+    }else{
+      value = value.replace(/[^0-9]/g, '');
+    }
     // Solo permitir números, sin puntos, espacios o caracteres especiales
-    const value = e.target.value.replace(/[^0-9]/g, '');
+    //value = e.target.value.replace(/[^0-9A-Z]/g, '');
     onNumeroIdentificacionChange(value);
   };
 
@@ -392,11 +430,11 @@ export default function DatosPaciente({
           <Label htmlFor="tipoDocumento" className="text-slate-800 font-medium">
             Tipo de documento del paciente <span className="text-red-500">*</span>
           </Label>
-          <Select value={tipoDocumento} onValueChange={onTipoDocumentoChange} required disabled={bBloquear}>
+          <Select value={tipoDocumento} onValueChange={onTipoDocumentoChange}  required disabled={bBloquear}>
             <SelectTrigger className="bg-white border-slate-200 text-slate-800 focus:border-blue-400 focus:ring-blue-400/20">
               <SelectValue placeholder="Selecciona el tipo de documento" />
             </SelectTrigger>
-            <SelectContent className="bg-white border-slate-200">
+            {/* <SelectContent className="bg-white border-slate-200">
               <SelectItem value="CC" className="text-slate-800 hover:bg-slate-50">
                 Cédula de Ciudadanía
               </SelectItem>
@@ -421,7 +459,32 @@ export default function DatosPaciente({
               <SelectItem value="SC" className="text-slate-800 hover:bg-slate-50">
                 Salvoconducto
               </SelectItem>
-            </SelectContent>
+              <SelectItem value="CN" className="text-slate-800 hover:bg-slate-50">
+                CN - Certificado De Nacido Vivo
+              </SelectItem>
+              <SelectItem value="PR" className="text-slate-800 hover:bg-slate-50">
+                PR - Passaporte De La ONU
+              </SelectItem>
+              <SelectItem value="NV" className="text-slate-800 hover:bg-slate-50">
+                NV - Certificado De Nacido Vivo
+              </SelectItem>
+              <SelectItem value="CD" className="text-slate-800 hover:bg-slate-50">
+                CD - Carnet Diplomado
+              </SelectItem>
+              <SelectItem value="MS" className="text-slate-800 hover:bg-slate-50">
+                MS - Menor sin Identificacion
+              </SelectItem>
+              <SelectItem value="AS" className="text-slate-800 hover:bg-slate-50">
+                AS - Adulto sin Identificacion
+              </SelectItem>
+            </SelectContent> */}
+            <SelectContent className="bg-white border-slate-200">
+            {gvtiposDocumento.map((doc) => (
+              <SelectItem key={doc.id} value={doc.id}>
+                {doc.nombre}
+              </SelectItem>
+            ))}
+          </SelectContent>
           </Select>
         </div>
 

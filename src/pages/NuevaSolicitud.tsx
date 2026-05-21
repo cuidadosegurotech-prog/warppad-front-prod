@@ -152,6 +152,12 @@ export default function NuevaSolicitud() {
           return;
         }
 
+        if (formData.archivos.length == 0) {
+          toast.error("Es necesario agregar al menos un adjunto para guardar la solicitud.");
+          e.target.disabled = false;
+          return;
+        }
+
         const agregarSolicitud: AgregarSolicitud = {
           UsuarioSolicitud: authenticated && keycloak?.tokenParsed?.name, // Usuario que realiza el login en Keycloak 
           TipoSolicitud: formData.tipoSolicitud,
@@ -196,7 +202,7 @@ export default function NuevaSolicitud() {
           PuntoReferenciaPaciente: formData.puntoReferencia,
           EmailUsuarioSolicitud: authenticated && keycloak?.tokenParsed?.email,
         };
-        console.log("Nueva solicitud:", agregarSolicitud);
+        //console.log("Nueva solicitud:", agregarSolicitud);
         formularioData.set("Data", JSON.stringify(agregarSolicitud));
 
         formData.archivos.map((file)=>{
