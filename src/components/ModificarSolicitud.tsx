@@ -274,12 +274,13 @@ export default function ModalUpdate({ ObjDatosSolicitud }: ModalUpdate) {
             });
 
             // --- Archivos EXISTENTES (ya en S3, solo IDs) ---
-            const idsExistentes = formData.archivos
+            const idsEliminar = formData.archivos
             .filter((archivo) => archivo.isExisting)
             .map((archivo) => archivo.id);
 
             // Enviar lista de IDs en un campo JSON
-            formularioData.append("idsExistentes", JSON.stringify(idsExistentes));
+            formularioData.append("idsEliminar", JSON.stringify(idsEliminar));
+            //console.log("Datos que envia en el body la solicitud: ",formularioData.getAll('idsEliminar'));
     
             //const result = await fetch(`${API_URL}/api/Solicitudes/AgregarSolicitud`, { method: "POST", headers: { 'Content-Type': "application/json", "Authorization": `Bearer ${token}` }, body: JSON.stringify(agregarSolicitud) }).then(response => response.json()).then(data => {(!data.Error) ? toast.success(data.Message) : toast.error(data.Message); return data}).catch(exception => {toast.error(`ERROR en handleSubmit() [ ${exception.name} - ${exception.message} ]`); return { Error : true, Message : `ERROR en handleSubmit() [ ${exception.name} - ${exception.message} ]`}});
             const result = await fetch(`${API_URL}/api/Solicitudes/ActualizarSolicitud`, { method: "POST", headers: {"Authorization": `Bearer ${token}` }, body: formularioData }).then(response => response.json()).then(data => {(!data.Error) ? toast.success(data.Message) : toast.error(data.Message); return data}).catch(exception => {toast.error(`ERROR en handleSubmit() [ ${exception.name} - ${exception.message} ]`); e.target.disabled = false; return { Error : true, Message : `ERROR en handleSubmit() [ ${exception.name} - ${exception.message} ]`}});
