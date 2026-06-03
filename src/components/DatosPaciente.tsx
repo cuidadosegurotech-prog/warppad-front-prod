@@ -341,7 +341,8 @@ export default function DatosPaciente({
     //onDepartamentoChange(departamento);
     //setmunicipiosDepartamento(municipiosDisponibles)
   useEffect(() => {
-  if (departamento) {
+  if (departamento != null && departamento != undefined && departamento != "") {
+    console.log("Departamento que llego Aqui =>",departamento)
     const municipiosDisponibles = gvMunicipiosPorDepartamento[departamento] || [];
     setmunicipiosDepartamento(municipiosDisponibles);
     if(ciudadMunicipio){
@@ -390,9 +391,10 @@ export default function DatosPaciente({
 
   const handleDepartamentoChange = (value: string) =>{
     //console.log("Departamento Seleccionado ",value);
+    
     onDepartamentoChange(value);
-    municipiosDisponibles = gvMunicipiosPorDepartamento[value]
-    setmunicipiosDepartamento(municipiosDisponibles)
+    //municipiosDisponibles = gvMunicipiosPorDepartamento[value]
+    //setmunicipiosDepartamento(municipiosDisponibles)
   };
 
   const handleSearchDepartamento = (value: string)=>{
@@ -407,7 +409,9 @@ export default function DatosPaciente({
     //console.log("Cambio de prestador a:", value);
     setmunicipiosDepartamento(gvMunicipiosPorDepartamento[departamento]);
     //onCiudadMunicipioChange(value);
+    console.log("Aun no Exploto")
     onDatosMunicipioChange(gvMunicipiosPorDepartamento[departamento].filter(item => item.nombre == value));
+    console.log("Exploto")
   };
 
   return (
@@ -547,9 +551,9 @@ export default function DatosPaciente({
               <SelectItem value="bolivar" className="text-slate-800 hover:bg-slate-50">
                 Bolívar
               </SelectItem>
-               <SelectItem value="cesar" className="text-slate-800 hover:bg-slate-50">
+               {/* <SelectItem value="cesar" className="text-slate-800 hover:bg-slate-50">
                 Cesar
-              </SelectItem>
+              </SelectItem> */}
               <SelectItem value="cordoba" className="text-slate-800 hover:bg-slate-50">
                 Córdoba
               </SelectItem>

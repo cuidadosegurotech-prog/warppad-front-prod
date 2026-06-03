@@ -282,7 +282,7 @@ export default function NuevaSolicitud() {
             onBarrioChange={(value) => setFormData({ ...formData, barrio: value })}
             onPuntoReferenciaChange={(value) => setFormData({ ...formData, puntoReferencia: value })}
             onTelefonosChange={(value) => setFormData({ ...formData, telefonos: value })}
-            onDatosMunicipioChange={(value) => setFormData({ ...formData, regional: value[0]["departamento"], ciudadMunicipio : value[0]["nombre"]})}
+            onDatosMunicipioChange={(value) => setFormData({ ...formData, regional:  value[0]?.departamento, ciudadMunicipio : value[0]?.nombre})}
           />
 
           {/* Información del Prestador */}
