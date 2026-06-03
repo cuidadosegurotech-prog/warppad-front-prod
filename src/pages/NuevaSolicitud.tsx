@@ -153,7 +153,7 @@ export default function NuevaSolicitud() {
         }
 
         if (formData.archivos.length == 0) {
-          toast.error("Es necesario agregar al menos un adjunto para guardar la solicitud.");
+          toast.error("Es necesario agregar al menos un adjunto para guardar la solicitud pad.");
           e.target.disabled = false;
           return;
         }
