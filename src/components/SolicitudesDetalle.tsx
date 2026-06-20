@@ -18,6 +18,7 @@ import DescripcionSolicitud from "@/components/DescripcionSolicitud";
 import InformacionPrestador from "@/components/InformacionPrestador";
 import InformacionSolicitud from "@/components/InformacionSolicitud";
 import CorreosDestinatarioSolicitud from '@/components/CorreosDestinatarioSolicitud';
+import ResultadoSolicitud from '@/components/ResultadoSolicitud';
 import { Save, Send, User, Mail, Phone, MapPin, Calendar, Star } from "lucide-react";
 import { Eye, RefreshCcw } from "lucide-react";
 import { useKeycloak } from "@/context/KeycloakContext";
@@ -68,81 +69,30 @@ export default function ModalUpdate({ ObjDatosSolicitud }: ModalUpdate) {
         archivos: [] as ArchivoSubido[],
         correos: [] as string[],
         serviciosSeleccionados: [] as string[],
-    });
+        estadoSolicitud: "",
+        resultadoSolicitud: "",
+        descripcionResultadoSolicitud : ""
 
-    interface AgregarSolicitud {
-        UsuarioSolicitud: string;
-        TipoSolicitud: string;
-        DescripcionSolicitud: string;
-        DatosSolicitud: {
-            solicitud_detalle: {
-                //Id: number;
-                //IdSolicitud: number;
-                TipoIdentificacion: string;
-                NumeroIdentificacion: string;
-                NombrePaciente: string;
-                DepartamentoPaciente: string;
-                Regional: string;
-                Prestador: string;
-                CiudadMunicipioPaciente: string;
-                DireccionPaciente: string;
-                BarrioPaciente: string;
-                PuntoReferenciaPaciente: string;
-                TelefonoPaciente: string;
-                TipoSolicitud: string;
-                OrdenesMedicasPaciente: boolean;
-                ServiciosSolicitadosPaciente: string;
-                CorreosDestinatarios: string
-                DescripcionSolicitud: string;
-            };
-        };
-        TipoIdentificacion: string;
-        NumeroIdentificacion: string;
-        NombrePaciente: string;
-        DepartamentoPaciente: string;
-        CiudadMunicipioPaciente: string;
-        DireccionPaciente: string;
-        BarrioPaciente: string;
-        TelefonoPaciente: string;
-        DetalleTipoSolicitud: string;
-        OrdenesMedicasPaciente: number;
-        ServiciosSolicitadosPaciente: string;
-        CorreosDestinatarios: string
-        DetalleDescripcionSolicitud: string;
-        Regional: string;
-        Prestador: string;
-        PuntoReferenciaPaciente: string;
-        EmailUsuarioSolicitud: string;
-    }
+    });
 
     const fnObtenerDetalleSolicitud = async () => {
         const resultado = await fetch(`${API_URL}/api/Solicitudes/ObtenerSolicitud/${ObjDatosSolicitud["Id"]}`, { method: "POST", headers: { "Content-Type": "Application/json", "Authorization": `Brearer ${token}` }, body: JSON.stringify({ EmailUsuarioSolicitud: authenticated && keycloak?.tokenParsed?.email }) }).then(response => response.json()).then(data => data).catch(ex => console.error(`ERROR en fnObtenerDetalleSolicitud() [ ${ex.name} - ${ex.message} ]`));
-        console.log("Resultado de obtener detalle solicitud", resultado);
         const vObjSolicitud = (!resultado.Error) ? resultado.Result : []
-        const objDatosSolicitudDetalle = JSON.parse(vObjSolicitud[0]?.DatosSolicitud)
-        //console.log(vObjSolicitud[0]);
-        setSolicitud(vObjSolicitud[0])
+        const objDatosSolicitudDetalle = JSON.parse(vObjSolicitud[0]?.DatosSolicitud);
+        const { solicitud_detalle } = objDatosSolicitudDetalle
+        solicitud_detalle.estadoSolicitud = vObjSolicitud[0].EstadoSolicitud
+        solicitud_detalle.resultadoSolicitud = vObjSolicitud[0].ResultadoSolicitud
+        solicitud_detalle.descripcionResultadoSolicitud = vObjSolicitud[0].DescripcionResultadoSolicitud
+        //setSolicitud(vObjSolicitud[0])
         const sAdjuntos = vObjSolicitud[0].Adjuntos;
-        console.log("Adjuntooooooos");
-        console.log(JSON.parse(sAdjuntos));
         setAdjuntos(sAdjuntos != null ? JSON.parse(sAdjuntos) : []);
         setServicios(objDatosSolicitudDetalle.solicitud_detalle.ServiciosSolicitadosPaciente.split(","));
-        console.log("Antes de setear la informacion del formData");
-        await fnCargarDatosFormulario(objDatosSolicitudDetalle.solicitud_detalle, objDatosSolicitudDetalle.solicitud_detalle.ServiciosSolicitadosPaciente.split(","),sAdjuntos != null ? JSON.parse(sAdjuntos) : []);
-        setSolicitudDetalle(objDatosSolicitudDetalle.solicitud_detalle);
-        //setServicios(solicitud["ServiciosSolicitadosPaciente"].split(","));
-        console.log("formdata");
-        console.log(formData);
-        // console.log(servicios)
+        await fnCargarDatosFormulario(solicitud_detalle, objDatosSolicitudDetalle.solicitud_detalle.ServiciosSolicitadosPaciente.split(","),sAdjuntos != null ? JSON.parse(sAdjuntos) : []);
+        setSolicitudDetalle(solicitud_detalle);
     }
 
     const fnCargarDatosFormulario = async (objSolicitud, servicios, vsAjuntos) => {
-        // console.log("Lo que llego en objSolicitud")
-        // console.log(objSolicitud);
-        // console.log("Antes de setear la informacion del formData");
-        // console.log("Los adjuntos de la solicitud son ", Adjuntos);
         let vsCorreos = objSolicitud.CorreosDestinatarios.split(", ") || [];
-        console.log("Correos recibidos",vsCorreos);
         setFormData({
             // Datos del paciente
             tipoDocumento: objSolicitud.TipoIdentificacion,
@@ -164,8 +114,10 @@ export default function ModalUpdate({ ObjDatosSolicitud }: ModalUpdate) {
             archivos: vsAjuntos,
             correos: vsCorreos,
             serviciosSeleccionados: servicios,
+            estadoSolicitud: objSolicitud.estadoSolicitud,
+            resultadoSolicitud: objSolicitud.resultadoSolicitud,
+            descripcionResultadoSolicitud: objSolicitud.descripcionResultadoSolicitud,
         });
-        console.log("Luego de setear bro");
     }
     // useEffect(()=>{
     //     const fnObtenerDetalleSolicitud = async ()=>{
@@ -178,139 +130,6 @@ export default function ModalUpdate({ ObjDatosSolicitud }: ModalUpdate) {
     //     }
     //     fnObtenerDetalleSolicitud();
     // }, []);
-
-    //console.log(solicitud);
-
-    const fnValidarCampos = (event: React.FormEvent) => {
-        try {
-            const vCamposFormulario = document.querySelectorAll("form input[type='text'], form input[type='number'], form textarea, form select");
-            const bCamposDiligenciados = Array.from(vCamposFormulario).every(item => item.value.trim() !== "");
-            if (!bCamposDiligenciados) {
-                toast.error('Existen campos por diligenciar, todos los campos con asterisco en rojo son obligatorios.');
-                event.target.disabled = false;
-            }
-            return bCamposDiligenciados;
-        } catch (error) {
-            toast.error(`ERROR en fnValidarCampos() [${error.name} - ${error.message}]`);
-            return false;
-        }
-    };
-
-    const fnValidarNumeroTelefono = (event: React.FormEvent) => {
-        try {
-            const iTelefonos = document.getElementById('telefonos');
-            const bTelefonosValidos = iTelefonos.value.length >= 10 ? true : false;
-
-            if (!bTelefonosValidos) {
-                toast.error('El numero de telefono debe tener 10 caracteres.');
-                event.target.disabled = false;
-            }
-            return bTelefonosValidos;
-        } catch (ex) {
-            toast.error(`ERROR en fnValidarNumeroTelefono() [ ${ex.name} - ${ex.message} ]`);
-            return false;
-        }
-    };
-
-    const handleSubmit = async (e: React.FormEvent) => {
-        console.log(`Enviando datos bro2...`);
-        e.preventDefault();
-        e.target.disabled = true;
-        if (fnValidarCampos(e) && fnValidarNumeroTelefono(e)) {
-            try {
-                const formularioData = new FormData();
-                if (!formData.tipoDocumento) {
-                    toast.error("Por favor seleccione un tipo de documento.");
-                    return;
-                }
-
-                const agregarSolicitud: AgregarSolicitud = {
-                    UsuarioSolicitud: authenticated && keycloak?.tokenParsed?.name, // Usuario que realiza el login en Keycloak 
-                    TipoSolicitud: formData.tipoSolicitud,
-                    DescripcionSolicitud: formData.descripcionSolicitud,
-                    DatosSolicitud: {
-                        solicitud_detalle: {
-                            //Id: 1, 
-                            //IdSolicitud: 1,
-                            TipoIdentificacion: formData.tipoDocumento,
-                            NumeroIdentificacion: formData.numeroIdentificacion,
-                            NombrePaciente: formData.nombrePaciente,
-                            DepartamentoPaciente: formData.departamento,
-                            CiudadMunicipioPaciente: formData.ciudadMunicipio,
-                            DireccionPaciente: formData.direccion,
-                            BarrioPaciente: formData.barrio,
-                            PuntoReferenciaPaciente: formData.puntoReferencia,
-                            TelefonoPaciente: formData.telefonos,
-                            TipoSolicitud: formData.tipoSolicitud,
-                            OrdenesMedicasPaciente: formData.archivos.length > 0,
-                            ServiciosSolicitadosPaciente: formData.serviciosSeleccionados.join(", "),
-                            CorreosDestinatarios: formData.correos.join(", "),
-                            DescripcionSolicitud: formData.descripcionSolicitud,
-                            Regional: formData.regional,
-                            Prestador: formData.prestador,
-                        },
-                    },
-                    TipoIdentificacion: formData.tipoDocumento,
-                    NumeroIdentificacion: formData.numeroIdentificacion,
-                    NombrePaciente: formData.nombrePaciente,
-                    DepartamentoPaciente: formData.departamento,
-                    CiudadMunicipioPaciente: formData.ciudadMunicipio,
-                    DireccionPaciente: formData.direccion,
-                    BarrioPaciente: formData.barrio,
-                    TelefonoPaciente: formData.telefonos,
-                    DetalleTipoSolicitud: formData.tipoSolicitud,
-                    OrdenesMedicasPaciente: formData.archivos.length,
-                    ServiciosSolicitadosPaciente: formData.serviciosSeleccionados.join(", "),
-                    CorreosDestinatarios: formData.correos.join(", "),
-                    DetalleDescripcionSolicitud: formData.descripcionSolicitud,
-                    Regional: formData.regional,
-                    Prestador: formData.prestador,
-                    PuntoReferenciaPaciente: formData.puntoReferencia,
-                    EmailUsuarioSolicitud: authenticated && keycloak?.tokenParsed?.email,
-                };
-                console.log("Nueva solicitud:", agregarSolicitud);
-                formularioData.set("Data", JSON.stringify(agregarSolicitud));
-
-                formData.archivos.map((file) => {
-                    formularioData.append("archivos", file.file);
-                });
-
-                //const result = await fetch(`${API_URL}/api/Solicitudes/AgregarSolicitud`, { method: "POST", headers: { 'Content-Type': "application/json", "Authorization": `Bearer ${token}` }, body: JSON.stringify(agregarSolicitud) }).then(response => response.json()).then(data => {(!data.Error) ? toast.success(data.Message) : toast.error(data.Message); return data}).catch(exception => {toast.error(`ERROR en handleSubmit() [ ${exception.name} - ${exception.message} ]`); return { Error : true, Message : `ERROR en handleSubmit() [ ${exception.name} - ${exception.message} ]`}});
-                const result = await fetch(`${API_URL}/api/Solicitudes/AgregarSolicitud`, { method: "POST", headers: { "Authorization": `Bearer ${token}` }, body: formularioData }).then(response => response.json()).then(data => { (!data.Error) ? toast.success(data.Message) : toast.error(data.Message); return data }).catch(exception => { toast.error(`ERROR en handleSubmit() [ ${exception.name} - ${exception.message} ]`); e.target.disabled = false; return { Error: true, Message: `ERROR en handleSubmit() [ ${exception.name} - ${exception.message} ]` } });
-                console.log('Resultado al realizar el guardado de la solicitud =>', result)
-                if (!result.Error) {
-                    await fetch(`${API_URL}/api/email/EnvioEmailDestinatario`, { method: "POST", headers: { 'Content-Type': "application/json", "Authorization": `Bearer ${token}` }, body: JSON.stringify(result.Result[0]) }).then(response => response.json()).then(data => { (!data.Error) ? toast.success(data.Message) : toast.error(data.Message); }).catch(exception => { toast.error(`ERROR en handleSubmit() [ ${exception.name} - ${exception.message} ]`); return { Error: true, Message: `ERROR en handleSubmit() [ ${exception.name} - ${exception.message} ]` } });
-
-                    setFormData({
-                        // Datos del paciente
-                        tipoDocumento: "",
-                        numeroIdentificacion: "",
-                        nombrePaciente: "",
-                        departamento: "",
-                        ciudadMunicipio: "",
-                        direccion: "",
-                        barrio: "",
-                        puntoReferencia: "",
-                        telefonos: "",
-                        //Datos solicitud
-                        descripcionSolicitud: "",
-                        // Información del prestador
-                        regional: "",
-                        prestador: "",
-                        // Información de la solicitud
-                        tipoSolicitud: "",
-                        archivos: [] as ArchivoSubido[],
-                        correos: [] as string[],
-                        serviciosSeleccionados: [] as string[],
-                    });
-                    e.target.disabled = false;
-                }
-            } catch (ex) {
-                toast.error(`ERROR en handleSubmit() [ ${ex.name} - ${ex.message} ]`);
-                e.target.disabled = false;
-            }
-        }
-    };
     return (
         <Dialog>
 
@@ -389,6 +208,11 @@ export default function ModalUpdate({ ObjDatosSolicitud }: ModalUpdate) {
                             descripcionSolicitud={formData.descripcionSolicitud}
                             onDatosSolicitudChange={(value) => setFormData({ ...formData, descripcionSolicitud: value })}
                             bBloquear={true}
+                        />
+                        <ResultadoSolicitud
+                            estado={formData.estadoSolicitud}
+                            resultado={formData.resultadoSolicitud}
+                            descripcionResultado={formData.descripcionResultadoSolicitud}
                         />
                     </form>
                 </Card>)}

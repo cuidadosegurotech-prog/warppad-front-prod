@@ -494,8 +494,8 @@ export default function ConsultarSolicitudes() {
                         {solicitud.Departamento}
                       </Badge>
                     </TableCell>
-                    <TableCell className="text-slate-600 text-xs py-3 max-w-xs">
-                      <div className="truncate" title={solicitud.DescripcionResultadoSolicitud}>
+                    <TableCell className="text-slate-600 text-xs py-3">
+                      <div className="truncate " title={solicitud.DescripcionResultadoSolicitud}>
                         {solicitud.DescripcionResultadoSolicitud}
                       </div>
                     </TableCell>

@@ -32,7 +32,8 @@ const tiposSolicitud = [
   "SOLICITUD DE ATENCION DOMICILIARIA",
   "ACCION DE TUTELA",
   "DERECHO DE PETICION",
-  "INCIDENTE DESACATO"
+  "INCIDENTE DESACATO",
+  "SANCIÓN"
 ];
 
 const tiposArchivosPermitidos = [
@@ -167,7 +168,7 @@ export default function InformacionSolicitud({
       {/* Órdenes médicas */}
       <div className="space-y-4">
         <Label className="text-slate-800 font-medium">
-          Órdenes médicas<span className="text-red-500"> *</span>
+          Órdenes médicas e Historia Clinica<span className="text-red-500"> *</span>
         </Label>
 
         <div className="space-y-3">

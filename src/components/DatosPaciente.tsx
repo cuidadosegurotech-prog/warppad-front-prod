@@ -17,12 +17,10 @@ interface TipoIndentificacion{
   permiteLetras: boolean
 }
 
-
-
 const gvMunicipiosPorDepartamento: Record<string, Municipio[]> = {
   "atlantico" : [
-    {nombre: "Barranquilla",departamento: "2025" },
     {nombre: "Baranoa",departamento: "2025" },
+    {nombre: "Barranquilla",departamento: "2" },
     {nombre: "Campo de la Cruz",departamento: "2025" },
     {nombre: "Candelaria",departamento: "2025" },
     {nombre: "Galapa",departamento: "2025" },
@@ -340,13 +338,12 @@ export default function DatosPaciente({
   //setmunicipiosDepartamento(municipiosDisponibles);
     //onDepartamentoChange(departamento);
     //setmunicipiosDepartamento(municipiosDisponibles)
+    
   useEffect(() => {
   if (departamento != null && departamento != undefined && departamento != "") {
-    console.log("Departamento que llego Aqui =>",departamento)
     const municipiosDisponibles = gvMunicipiosPorDepartamento[departamento] || [];
     setmunicipiosDepartamento(municipiosDisponibles);
     if(ciudadMunicipio){
-      console.log("Llego la ciudadMunicipio");
       onDatosMunicipioChange(gvMunicipiosPorDepartamento[departamento].filter(item => item.nombre == ciudadMunicipio));
     }
   } else {
@@ -355,13 +352,13 @@ export default function DatosPaciente({
 }, [departamento]);
 
 
-  useEffect(() => {
-    if(ciudadMunicipio){
-      console.log("Llego la ciudadMunicipio");
-      setmunicipiosDepartamento(gvMunicipiosPorDepartamento[departamento]);
-      onDatosMunicipioChange(gvMunicipiosPorDepartamento[departamento].filter(item => item.nombre == ciudadMunicipio));
-    }
-  }, [ciudadMunicipio]);
+  // useEffect(() => {
+  //   if(ciudadMunicipio){
+  //     console.log("Llego la ciudadMunicipio2 =>",ciudadMunicipio);
+  //     setmunicipiosDepartamento(gvMunicipiosPorDepartamento[departamento]);
+  //     onDatosMunicipioChange(gvMunicipiosPorDepartamento[departamento].filter(item => item.nombre == ciudadMunicipio));
+  //   }
+  // }, [ciudadMunicipio]);
 
   const tipoDocSeleccionado = gvtiposDocumento.find(
     (doc) => doc.id === tipoDocumento
@@ -395,13 +392,13 @@ export default function DatosPaciente({
     onDepartamentoChange(value);
     //municipiosDisponibles = gvMunicipiosPorDepartamento[value]
     //setmunicipiosDepartamento(municipiosDisponibles)
+    
   };
 
   const handleSearchDepartamento = (value: string)=>{
     console.log(value);
     //console.table(gvMunicipiosPorDepartamento[departamento]);
     const vObjMunicipiosDepartamento = value.length != 0 ?  gvMunicipiosPorDepartamento[departamento].filter(item => item.nombre.toLowerCase().includes(value.toLowerCase())) : gvMunicipiosPorDepartamento[departamento];
-    console.log("Los que obtuvo al realizar el filtro", vObjMunicipiosDepartamento);
     setmunicipiosDepartamento(vObjMunicipiosDepartamento);
   };
 
@@ -409,9 +406,7 @@ export default function DatosPaciente({
     //console.log("Cambio de prestador a:", value);
     setmunicipiosDepartamento(gvMunicipiosPorDepartamento[departamento]);
     //onCiudadMunicipioChange(value);
-    console.log("Aun no Exploto")
-    onDatosMunicipioChange(gvMunicipiosPorDepartamento[departamento].filter(item => item.nombre == value));
-    console.log("Exploto")
+    onDatosMunicipioChange(gvMunicipiosPorDepartamento[departamento].filter(item => item.nombre.trim() == value.trim()));
   };
 
   return (
@@ -535,7 +530,7 @@ export default function DatosPaciente({
         {/* Departamento del paciente */}
         <div className="space-y-2">
           <Label htmlFor="departamento" className="text-slate-800 font-medium">
-            Departamento solicitud <span className="text-red-500">*</span>
+            Departamento de atención <span className="text-red-500">*</span>
           </Label>
           <Select value={departamento} onValueChange={handleDepartamentoChange} disabled={bBloquear}>
             <SelectTrigger className="bg-white border-slate-200 text-slate-800 focus:border-blue-400 focus:ring-blue-400/20">
@@ -566,7 +561,7 @@ export default function DatosPaciente({
         {/* Municipio */}
         <div className="space-y-2">
           <Label htmlFor="Municipio" className="text-slate-800 font-medium">
-            Ciudad / Municipio solicitud
+            Ciudad / Municipio de atención
             <span className="text-red-500"> *</span>
           </Label>
           <Select value={ciudadMunicipio} onValueChange={handleMunicipioChange} disabled={!departamento} disabled={bBloquear}>
@@ -641,7 +636,7 @@ export default function DatosPaciente({
         {/* Punto de referencia del domicilio */}
         <div className="space-y-2">
           <Label htmlFor="puntoReferencia" className="text-slate-800 font-medium">
-            Punto de referencia del domicilio
+            Punto de referencia del domicilio <span className="text-red-500">*</span>
           </Label>
           <Textarea
             id="puntoReferencia"

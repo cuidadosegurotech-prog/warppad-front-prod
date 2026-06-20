@@ -154,12 +154,12 @@ export default function InformacionPrestador({
 }: InformacionPrestadorProps) {
   const [search, setSearch] = useState("");
   const [prestadoresRegional, setPrestadoresRegional] = useState([]);
-  useEffect(()=>{
-    if(regional){
-      console.log("Regional", regional);
-      onRegionalChange(regional);
-    }
-  }, [regional]);
+  // useEffect(()=>{
+  //   if(regional){
+  //     console.log("Regional", regional);
+  //     onRegionalChange(regional);
+  //   }
+  // }, [regional]);
 
   let prestadoresDisponibles = prestadoresPorRegional[regional] || [];
 
@@ -224,6 +224,12 @@ export default function InformacionPrestador({
             <SelectItem value="5" className="text-slate-800 hover:bg-slate-50 bg-white">
               Cordoba
             </SelectItem>
+            <SelectItem value="2" className="text-slate-800 hover:bg-slate-50 bg-white">
+              Barranquilla
+            </SelectItem>
+            <SelectItem value="4" className="text-slate-800 hover:bg-slate-50 bg-white">
+              Sucre
+            </SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -255,12 +261,12 @@ export default function InformacionPrestador({
       {/* Ciudad / Municipio del paciente */}
         <div className="space-y-2">
           <Label htmlFor="Prestador" className="text-slate-800 font-medium">
-            Prestador <span className="text-red-500">*</span>
+            IPS Solicitante o Prescriptora <span className="text-red-500">*</span>
           </Label>
           <Input
             id="Prestador"
             type="text"
-            placeholder="Nombre del prestador"
+            placeholder="IPS Solicitante o Prescriptora"
             value={prestador}
             onChange={(e) => handlePrestadorChange(e.target.value)}
             className="bg-white border-slate-200 text-slate-800 placeholder:text-slate-400 focus:border-blue-400 focus:ring-blue-400/20"

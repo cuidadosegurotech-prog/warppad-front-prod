@@ -28,7 +28,7 @@ export default function CorreosDestinatarioSolicitud({
   const [errorCorreo, setErrorCorreo] = useState("");
 
   //const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9-]+\.[a-zA-Z]{2,}$/;
+  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9-]+\.[a-zA-Z]{2,}(\.[a-zA-Z]{2,})?$/;
 
   const agregarCorreo = () => {
     if (!emailRegex.test(nuevoCorreo)) {
@@ -57,7 +57,7 @@ export default function CorreosDestinatarioSolicitud({
     <div className="space-y-6">
       <div className="space-y-4">
         <Label className="text-slate-800 font-medium">
-          Correos electrónicos
+          Copiar Correo electrónico a
           <span className="text-red-500"> *</span>
         </Label>
 
