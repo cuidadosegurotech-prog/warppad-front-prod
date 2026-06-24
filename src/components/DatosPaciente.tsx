@@ -45,8 +45,9 @@ const gvMunicipiosPorDepartamento: Record<string, Municipio[]> = {
 ],
 "bolivar" : [
   {nombre: "Achí", departamento: "2024"},
+  {nombre: "las piedras bolivar", departamento: "1"},
   {nombre: "Altos del Rosario", departamento: "3"},
-  {nombre: "Arenal", departamento: "2024"},
+  {nombre: "san estanislao de kostka", departamento: "1"},
   {nombre: "Arjona", departamento: "1"},
   {nombre: "Arroyohondo", departamento: "2006"},
   {nombre: "Barranco de Loba", departamento: "3"},
