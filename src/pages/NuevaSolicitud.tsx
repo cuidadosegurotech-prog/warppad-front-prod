@@ -238,6 +238,8 @@ export default function NuevaSolicitud() {
             serviciosSeleccionados: [] as string[],
           });
           e.target.disabled = false;
+        }else{
+          e.target.disabled = false;
         }
       } catch (ex) {
         toast.error(`ERROR en handleSubmit() [ ${ex.name} - ${ex.message} ]`);

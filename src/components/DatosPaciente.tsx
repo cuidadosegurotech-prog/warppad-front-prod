@@ -547,9 +547,9 @@ export default function DatosPaciente({
               <SelectItem value="bolivar" className="text-slate-800 hover:bg-slate-50">
                 Bolívar
               </SelectItem>
-               {/* <SelectItem value="cesar" className="text-slate-800 hover:bg-slate-50">
+               <SelectItem value="cesar" className="text-slate-800 hover:bg-slate-50">
                 Cesar
-              </SelectItem> */}
+              </SelectItem>
               <SelectItem value="cordoba" className="text-slate-800 hover:bg-slate-50">
                 Córdoba
               </SelectItem>
