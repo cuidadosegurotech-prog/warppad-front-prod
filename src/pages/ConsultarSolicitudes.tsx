@@ -245,9 +245,9 @@ export default function ConsultarSolicitudes() {
       ["ID", "Título", "EPS", "Estado", "Prioridad", "Tipo", "Fecha Creación", "Fecha Actualización"],
       // Data rows
       ...filteredSolicitudes.map(solicitud => [
-        solicitud.id,
+        solicitud.Id,
         solicitud.titulo,
-        solicitud.eps,
+        solicitud.ClinicaPrestadora,
         solicitud.estado,
         solicitud.prioridad,
         solicitud.tipo,
