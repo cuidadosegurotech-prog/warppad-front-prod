@@ -242,12 +242,14 @@ export default function ConsultarSolicitudes() {
   const handleExportData = () => {
     const csvContent = [
       // Headers
-      ["ID", "Título", "EPS", "Estado", "Prioridad", "Tipo", "Fecha Creación", "Fecha Actualización"],
+      ["ID", "Título", "EPS", "Paciente", "Regional",  "Estado", "Prioridad", "Tipo", "Fecha Creación", "Fecha Actualización"],
       // Data rows
       ...filteredSolicitudes.map(solicitud => [
         solicitud.Id,
         solicitud.titulo,
         solicitud.ClinicaPrestadora,
+        solicitud.DatosPaciente,
+        solicitud.Regional,
         solicitud.estado,
         solicitud.prioridad,
         solicitud.tipo,
