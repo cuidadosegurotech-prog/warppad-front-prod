@@ -240,38 +240,6 @@ export default function ConsultarSolicitudes() {
   };
 
   const handleExportData = () => {
-    // const csvContent = [
-    //   // Headers
-    //   ["ID", "Título", "EPS", "Paciente", "Regional",  "Estado", "Prioridad", "Tipo", "Fecha Creación", "Fecha Actualización"],
-    //   // Data rows
-    //   ...filteredSolicitudes.map(solicitud => [
-    //     solicitud.Id,
-    //     solicitud.titulo,
-    //     solicitud.ClinicaPrestadora,
-    //     solicitud.DatosPaciente,
-    //     solicitud.Regional,
-    //     solicitud.estado,
-    //     solicitud.prioridad,
-    //     solicitud.tipo,
-    //     solicitud.fechaCreacion,
-    //     solicitud.fechaActualizacion
-    //   ])
-    // ];
-    
-    // const csvString = csvContent.map(row => 
-    //   row.map(cell => `"${cell}"`).join(",")
-    // ).join("\n");
-    
-    // const blob = new Blob([csvString], { type: "text/csv;charset=utf-8;" });
-    // const link = document.createElement("a");
-    // const url = URL.createObjectURL(blob);
-    // link.setAttribute("href", url);
-    // link.setAttribute("download", `solicitudes_${new Date().toISOString().split('T')[0]}.csv`);
-    // link.style.visibility = "hidden";
-    // document.body.appendChild(link);
-    // link.click();
-    // document.body.removeChild(link);
-
     const data = filteredSolicitudes.map(solicitud => ({
       ID: solicitud.Id,
       Título: solicitud.titulo,
@@ -281,6 +249,7 @@ export default function ConsultarSolicitudes() {
       Estado: solicitud.estado,
       Prioridad: solicitud.prioridad,
       Tipo: solicitud.tipo,
+      "Resultado Solicitud" : solicitud.ResultadoSolicitud,
       "Fecha Creación": solicitud.fechaCreacion,
       "Fecha Actualización": solicitud.fechaActualizacion
     }));
