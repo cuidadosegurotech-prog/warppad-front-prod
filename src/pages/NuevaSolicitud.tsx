@@ -157,7 +157,15 @@ export default function NuevaSolicitud() {
           e.target.disabled = false;
           return;
         }
+        
 
+        if (formData.serviciosSeleccionados.length == 0) {
+          toast.error("Es necesario agregar al menos un Servicio para guardar la solicitud pad.");
+          e.target.disabled = false;
+          return;
+        }
+
+        
         const agregarSolicitud: AgregarSolicitud = {
           UsuarioSolicitud: authenticated && keycloak?.tokenParsed?.name, // Usuario que realiza el login en Keycloak 
           TipoSolicitud: formData.tipoSolicitud,

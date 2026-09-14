@@ -59,6 +59,7 @@ export default function ConsultarSolicitudes() {
 
 
   useEffect(()=>{
+    console.log(keycloak);
     const fnObtenerSolicitudes = async ()=>{
       const resultado = await fetch(`${API_URL}/api/Solicitudes/ObtenerSolicitudes`, { method : "POST" ,headers: { "Content-Type" : "Application/json", "Authorization" : `Brearer ${token}` }, body: JSON.stringify({ EmailUsuarioSolicitud : authenticated && keycloak?.tokenParsed?.email }) }).then(response => response.json()).then(data => data).catch(ex => console.error(`ERROR en fnObtenerSolicitudes() [ ${ex.name} - ${ex.message} ]`));
       console.log(resultado);
@@ -502,7 +503,8 @@ export default function ConsultarSolicitudes() {
                         Ver
                       </Button> */}
                       <ModalDetalle key={solicitud.Id} ObjDatosSolicitud={solicitud}></ModalDetalle>
-                      {(solicitud.ResultadoSolicitud == "NO ADMISIONADO") && (<ModalUpdate key={solicitud.Id} ObjDatosSolicitud={solicitud}></ModalUpdate>)}
+                      
+                      {(solicitud.ResultadoSolicitud == "NO ADMISIONADO" || solicitud.ResultadoSolicitud == "Rechazado" ) && (<ModalUpdate key={`${solicitud.Id}_1`} ObjDatosSolicitud={solicitud}></ModalUpdate>)}
                     </TableCell>
                   </TableRow>
                 ))
