@@ -67,6 +67,7 @@ const gvMunicipiosPorDepartamento: Record<string, Municipio[]> = {
   {nombre: "María La Baja", departamento: "1"},
   {nombre: "Montecristo", departamento: "2024"},
   {nombre: "Morales", departamento: "2024"},
+  {nombre: "Mompox", departamento: "2024"},
   {nombre: "Norosí", departamento: "3"},
   {nombre: "Pinillos", departamento: "2024"},
   {nombre: "Regidor", departamento: "3"},
